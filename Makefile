@@ -23,4 +23,4 @@ test:
 	yarn run test
 
 test-coverage:
-	yarn run test --coverage
+	yarn run test --coverage --detectOpenHandles
