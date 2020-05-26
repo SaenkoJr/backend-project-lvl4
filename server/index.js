@@ -81,19 +81,6 @@ const addHooks = (app) => {
       req.currentUser = new Guest();
     }
   });
-
-  const rollbar = new Rollbar({
-    accessToken: process.env.ROLLBAR_ACCESS_TOKEN,
-    captureUncaught: true,
-    captureUnhandledRejections: true,
-  });
-
-  app.addHook('onError', async (req, reply, error) => {
-    app.log.error('Error');
-    rollbar.error(error, req);
-
-    reply.send(error);
-  });
 };
 
 const registerPlugins = (app) => {
@@ -113,17 +100,17 @@ const registerPlugins = (app) => {
 };
 
 const setupErrorHandler = (app) => {
-  // const rollbar = new Rollbar({
-  //   accessToken: process.env.ROLLBAR_ACCESS_TOKEN,
-  //   captureUncaught: true,
-  //   captureUnhandledRejections: true,
-  // });
+  const rollbar = new Rollbar({
+    accessToken: process.env.ROLLBAR_ACCESS_TOKEN,
+    captureUncaught: true,
+    captureUnhandledRejections: true,
+  });
 
-  // app.setErrorHandler(async (err, req, reply) => {
-  //   rollbar.error(err, req);
+  app.setErrorHandler(async (err, req, reply) => {
+    rollbar.error(err, req);
 
-  //   reply.send(err);
-  // });
+    reply.send(err);
+  });
 };
 
 export default () => {
