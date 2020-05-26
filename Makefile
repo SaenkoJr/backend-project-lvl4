@@ -1,8 +1,8 @@
 setup:
-	npm install
+	yarn install
 
 build:
-	npm run build
+	yarn run build
 
 prepare:
 	touch .env
@@ -20,7 +20,7 @@ lint:
 	npx eslint .
 
 test:
-	npm run test
+	yarn run test
 
 test-coverage:
-	npm run test --coverage
+	yarn run test --coverage
