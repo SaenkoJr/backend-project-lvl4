@@ -1,0 +1,26 @@
+- const getInputName = (entity, propery) => `${entity.constructor.name.toLowerCase()}[${propery}]`
+
+mixin formFor(entity = null)
+  form&attributes(attributes)
+    block
+
+mixin input(entity, propertyName, errors = [])
+  - error = errors.find((error) => error.propery === propertyName)
+  .form-group(class=(errors[propertyName] && 'has-danger'))
+    label= propertyName
+    input(
+      name=getInputName(entity, propertyName)
+      class='form-control'
+      value=_.get(entity, propertyName, '')
+    )&attributes(attributes)
+    if error
+      .form-control-feedback= Object.values(error.constraints).join('. ')
+
+mixin submit(form = null)
+  .form-group
+    input(class='btn btn-primary' type='submit')&attributes(attributes)
+
+mixin buttonTo(action, method)
+  form(action=action, method="post")
+    input(name="_method" type="hidden" value=method)
+    input(type='submit')&attributes(attributes)
