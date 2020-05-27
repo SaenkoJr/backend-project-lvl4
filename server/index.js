@@ -124,7 +124,9 @@ export default () => {
     },
   });
 
-  setupErrorHandler(app);
+  if (isProduction) {
+    setupErrorHandler(app);
+  }
 
   registerPlugins(app);
 

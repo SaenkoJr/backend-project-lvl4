@@ -3,9 +3,6 @@
   "version": "0.0.1",
   "description": "4th hexlet project",
   "main": "",
-  "jest": {
-    "testEnvironment": "node"
-  },
   "scripts": {
     "test": "jest",
     "build-configs": "babel ormconfig.js webpack.config.js --out-dir dist",
