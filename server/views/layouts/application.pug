@@ -26,9 +26,9 @@ html(lang="en").h-100
       //-         a.nav-link(href='')= t('layouts.application.signUp')
     .container.h-100
 
-      each messages, type in reply.flash() || []
-        each message in messages
-          div.alert(class=`alert-${getAlertClass(type)}`)= message
+      //- each messages, type in reply.flash() || []
+      //-   each message in messages
+      //-     div.alert(class=`alert-${getAlertClass(type)}`)= message
 
       h1.my-4
         block header

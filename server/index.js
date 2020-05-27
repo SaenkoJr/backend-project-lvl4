@@ -5,8 +5,8 @@ import fastify from 'fastify';
 import fastifyStatic from 'fastify-static';
 import fastifyTypeORM from 'fastify-typeorm';
 import fastifyErrorPage from 'fastify-error-page';
-import fastifySecureSession from 'fastify-secure-session';
-import fastifyFlash from 'fastify-flash';
+// import fastifySecureSession from 'fastify-secure-session';
+// import fastifyFlash from 'fastify-flash';
 import fastifyReverseRoutes from 'fastify-reverse-routes';
 import pointOfView from 'point-of-view';
 import Pug from 'pug';
@@ -17,8 +17,8 @@ import ormconfig from '../ormconfig';
 import webpackConfig from '../webpack.config';
 import getHelpers from './helpers';
 import addRoutes from './routes';
-import User from './entity/User';
-import Guest from './entity/Guest';
+// import User from './entity/User';
+// import Guest from './entity/Guest';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const isDevelopment = !isProduction;
@@ -72,27 +72,27 @@ const addHooks = (app) => {
   app.decorateRequest('currentUser', null);
   app.decorateRequest('signedIn', false);
 
-  app.addHook('preHandler', async (req) => {
-    const userId = req.session.get('userId');
-    if (userId) {
-      req.currentUser = await User.find(userId);
-      req.signedIn = true;
-    } else {
-      req.currentUser = new Guest();
-    }
-  });
+  // app.addHook('preHandler', async (req) => {
+  //   const userId = req.session.get('userId');
+  //   if (userId) {
+  //     req.currentUser = await User.find(userId);
+  //     req.signedIn = true;
+  //   } else {
+  //     req.currentUser = new Guest();
+  //   }
+  // });
 };
 
 const registerPlugins = (app) => {
   app.register(fastifyErrorPage);
   app.register(fastifyReverseRoutes);
-  app.register(fastifySecureSession, {
-    secret: process.env.SECRET,
-    cookie: {
-      path: '/',
-    },
-  });
-  app.register(fastifyFlash);
+  // app.register(fastifySecureSession, {
+  //   secret: process.env.SECRET,
+  //   cookie: {
+  //     path: '/',
+  //   },
+  // });
+  // app.register(fastifyFlash);
   app.register(fastifyTypeORM, ormconfig)
     .after((err) => {
       if (err) throw err;
