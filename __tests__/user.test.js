@@ -6,24 +6,12 @@ import User from '../server/entity/User';
 describe('User', () => {
   let server;
 
-  const user1 = {
+  const buildUser = () => ({
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
     email: faker.internet.email(),
     password: faker.internet.password(8),
-  };
-  const user2 = {
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(8),
-  };
-  const user3 = {
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(8),
-  };
+  });
 
   beforeAll(() => {
     server = app();
@@ -43,7 +31,7 @@ describe('User', () => {
       method: 'POST',
       url: '/users',
       body: {
-        user: user1,
+        user: buildUser(),
       },
     });
 
@@ -54,6 +42,9 @@ describe('User', () => {
   });
 
   it('DELETE /users/:id', async () => {
+    const user1 = buildUser();
+    const user2 = buildUser();
+
     await server.inject({
       method: 'POST',
       url: '/users',
@@ -93,13 +84,15 @@ describe('User', () => {
   });
 
   it('PATCH /users/:id', async () => {
+    const user = buildUser();
+
     await server.inject({
       method: 'POST',
       url: '/users',
-      body: { user: user3 },
+      body: { user },
     });
 
-    const { email, password } = user3;
+    const { email, password } = user;
     const { id } = await User.findOne({ email });
 
     const sessionRes = await server.inject({
@@ -124,7 +117,7 @@ describe('User', () => {
     const updatedUser = await User.findOne({ email });
 
     expect(res.statusCode).toBe(302);
-    expect(updatedUser.firstName).not.toBe(user3.firstName);
+    expect(updatedUser.firstName).not.toBe(user.firstName);
   });
 
   afterEach(async () => {
