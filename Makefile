@@ -1,6 +1,5 @@
 setup:
 	yarn install
-	./node_modules/.bin/secure-session-gen-key > session-key
 
 build:
 	yarn run build
