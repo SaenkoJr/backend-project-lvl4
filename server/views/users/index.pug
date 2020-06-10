@@ -1,0 +1,19 @@
+extends ../layouts/application.pug
+
+block content
+  table.table.table-striped
+    thead
+      tr
+        th= t('views.users.user.id')
+        th= t('views.users.user.firstName')
+        th= t('views.users.user.lastName')
+        th= t('views.users.user.email')
+        th= t('views.users.user.createdAt')
+    tbody
+      each user in users
+        tr
+          td= user.id
+          td= user.firstName
+          td= user.lastName
+          td= user.email
+          td= new Date(user.createdAt).toDateString()

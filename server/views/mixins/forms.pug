@@ -1,13 +1,13 @@
-- const getInputName = (entity, propery) => `${entity.constructor.name.toLowerCase()}[${propery}]`
+- const getInputName = (entity, property) => `${entity.constructor.name.toLowerCase()}[${property}]`;
 
 mixin formFor(entity = null)
   form&attributes(attributes)
     block
 
 mixin input(entity, propertyName, errors = [])
-  - error = errors.find((error) => error.propery === propertyName)
+  - error = errors.find((error) => error.property === propertyName)
   .form-group(class=(errors[propertyName] && 'has-danger'))
-    label= propertyName
+    label= t(`views.users.new.${propertyName}`)
     input(
       name=getInputName(entity, propertyName)
       class='form-control'

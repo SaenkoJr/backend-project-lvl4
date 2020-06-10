@@ -1,24 +1,42 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column, BaseEntity,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { IsNotEmpty, IsEmail } from 'class-validator';
 
 @Entity()
 class User extends BaseEntity {
+  isGuest = false;
+
   @PrimaryGeneratedColumn()
-  id = null;
+  id;
 
   @Column('varchar')
+  @IsNotEmpty()
+  firstName;
+
+  @Column('varchar')
+  @IsNotEmpty()
+  lastName;
+
+  @Column({ type: 'varchar', unique: true })
   @IsEmail()
   @IsNotEmpty()
-  email = '';
-
-  @IsNotEmpty()
-  password = '';
+  email;
 
   @Column('varchar')
   @IsNotEmpty()
-  passwordDigest = '';
+  passwordDigest;
+
+  @CreateDateColumn()
+  createdAt;
+
+  @UpdateDateColumn()
+  updatedAt;
 }
 
 export default User;

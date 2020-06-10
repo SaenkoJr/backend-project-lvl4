@@ -3,27 +3,29 @@ include ../mixins/forms.pug
 doctype html
 html(lang="en").h-100
   head
-    title Task Manager
+    title= t('appName')
     script(src=assetPath('main.js'))
     link(href=assetPath('main.css'))
   body.h-100.d-flex.flex-column
-    //- nav.navbar.navbar-expand-lg.navbar-light.bg-light.mb-3
-      //- a.navbar-brand(href=route('root'))= t('appName')
-      //- button.navbar-toggler(data-toggle="collapse" data-target="#navbarSupportedContent")
-      //-   span.navbar-toggler-icon
-      //- .collapse.navbar-collapse
-      //-   ul.navbar-nav.mr-auto
-      //-     li.nav-item
-      //-       a.nav-link(href=route('root'))= t('layouts.application.users')
-      //-   ul.navbar-nav
-      //-     if reply.request.signedIn
-      //-       li.nav-item
-      //-         +buttonTo(route('session'), 'delete')(class="btn nav-link" value=t('layouts.application.signOut'))
-      //-     else
-      //-       li.nav-item
-      //-         a.nav-link(href='')= t('layouts.application.signIn')
-      //-       li.nav-item
-      //-         a.nav-link(href='')= t('layouts.application.signUp')
+    nav.navbar.navbar-expand-lg.navbar-light.bg-light.mb-3
+      a.navbar-brand(href=route('root'))= t('appName')
+      button.navbar-toggler(data-toggle="collapse" data-target="#navbarSupportedContent")
+        span.navbar-toggler-icon
+      .collapse.navbar-collapse
+        ul.navbar-nav.mr-auto
+          li.nav-item
+            a.nav-link(href=route('users'))= t('layouts.application.users')
+        ul.navbar-nav
+          if reply.request.signedIn
+            li.nav-item
+              a.nav-link(href=route('settings'))= t('layouts.application.settings')
+            li.nav-item
+              +buttonTo(route('session'), 'delete')(class="btn nav-link" value=t('layouts.application.signOut'))
+          else
+            li.nav-item
+              a.nav-link(href=route('newSession'))= t('layouts.application.signIn')
+            li.nav-item
+              a.nav-link(href=route('newUser'))= t('layouts.application.signUp')
     .container.h-100
 
       each messages, type in reply.flash() || []

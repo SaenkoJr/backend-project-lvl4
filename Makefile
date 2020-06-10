@@ -1,5 +1,6 @@
 setup:
 	yarn install
+	./node_modules/.bin/secure-session-gen-key > session-key
 
 build:
 	yarn run build
@@ -21,6 +22,9 @@ lint:
 
 test:
 	yarn run test
+
+test-watch:
+	yarn run test --watchAll
 
 test-coverage:
 	yarn run test --coverage --detectOpenHandles

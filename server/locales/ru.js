@@ -16,6 +16,9 @@ module.exports = {
           error: 'Не удалось зарегистрировать',
           success: 'Пользователь успешно зарегистрирован',
         },
+        access: {
+          denied: 'Для доступа необходимо авторизироваться',
+        },
       },
     },
     layouts: {
@@ -24,6 +27,7 @@ module.exports = {
         signIn: 'Вход',
         signUp: 'Регистрация',
         signOut: 'Выход',
+        settings: 'Настройки',
       },
     },
     views: {
@@ -31,17 +35,35 @@ module.exports = {
         new: {
           signIn: 'Вход',
           submit: 'Войти',
+          email: 'Эл. почта',
+          password: 'Пароль',
         },
       },
       users: {
         new: {
           submit: 'Сохранить',
           signUp: 'Регистрация',
+          firstName: 'Имя',
+          lastName: 'Фамилия',
+          email: 'Эл. почта',
+          password: 'Пароль',
+        },
+        user: {
+          id: 'ID',
+          firstName: 'Имя',
+          lastName: 'Фамилия',
+          email: 'Эл. почта',
+          createdAt: 'Дата регистарции',
+        },
+        settings: {
+          settings: 'Настройки',
+          update: 'Обновить',
+          delete: 'Удалить профиль',
         },
       },
       welcome: {
         index: {
-          hello: 'Привет!',
+          hello: 'Hello there!',
         },
       },
     },

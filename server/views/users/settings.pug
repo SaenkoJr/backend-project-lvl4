@@ -1,0 +1,15 @@
+extends ../layouts/application.pug
+
+block header
+  = t('views.users.settings.settings')
+
+block content
+  +formFor(user)(action=`/users/${user.id}` method='post')
+    +input(user, 'firstName', errors)(type='text')
+    +input(user, 'lastName', errors)(type='text')
+    +input(user, 'email', errors)(type='text')
+    input(type='hidden' name='_method' value='patch')
+    +submit(user)(value=t('views.users.settings.update'))
+  +buttonTo(`/users/${user.id}`, 'delete')(
+    class='btn btn-danger'
+    value=t('views.users.settings.delete'))

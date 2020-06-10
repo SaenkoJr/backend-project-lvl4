@@ -1,3 +1,11 @@
 import welcome from './welcome';
+import users from './users';
+import session from './session';
 
-export default (app) => welcome(app);
+const contollers = [
+  welcome,
+  users,
+  session,
+];
+
+export default (app) => contollers.forEach((f) => f(app));

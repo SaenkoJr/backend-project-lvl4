@@ -7,3 +7,4 @@ temp/
 .env
 database.sqlite
 coverage
+session-key

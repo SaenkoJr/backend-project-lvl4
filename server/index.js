@@ -1,11 +1,15 @@
+import 'reflect-metadata';
 import path from 'path';
 import dotenv from 'dotenv';
+import crypto from 'crypto';
 import Rollbar from 'rollbar';
 import fastify from 'fastify';
 import fastifyStatic from 'fastify-static';
 import fastifyTypeORM from 'fastify-typeorm';
 import fastifyErrorPage from 'fastify-error-page';
 import fastifySecureSession from 'fastify-secure-session';
+import fastifyFormBody from 'fastify-formbody';
+import fastifyMethodOverride from 'fastify-method-override';
 import fastifyFlash from 'fastify-flash';
 import fastifyReverseRoutes from 'fastify-reverse-routes';
 import pointOfView from 'point-of-view';
@@ -21,6 +25,7 @@ import User from './entity/User';
 import Guest from './entity/Guest';
 
 const isProduction = process.env.NODE_ENV === 'production';
+const isTesting = process.env.NODE_ENV === 'test';
 const isDevelopment = !isProduction;
 
 const setupViews = (app) => {
@@ -61,7 +66,6 @@ const setupLocalization = () => {
   i18next.init({
     lng: 'ru',
     fallbackLng: 'en',
-    debug: isDevelopment,
     resources: {
       ru,
     },
@@ -75,11 +79,20 @@ const addHooks = (app) => {
   app.addHook('preHandler', async (req) => {
     const userId = req.session.get('userId');
     if (userId) {
-      req.currentUser = await User.find(userId);
+      req.currentUser = await User.findOne(userId);
       req.signedIn = true;
+      req.log.info(`${req.raw.method} | ${req.raw.url} | ${userId}`, '||| METHOD | USER ID !');
     } else {
       req.currentUser = new Guest();
     }
+
+
+    if (req.body) {
+      req.log.info({ body: req.body }, 'parsed body');
+    }
+
+    /* eslint-disable-next-line */
+    return;
   });
 };
 
@@ -88,11 +101,14 @@ const registerPlugins = (app) => {
   app.register(fastifyReverseRoutes);
   app.register(fastifySecureSession, {
     secret: process.env.SESSION_SECRET,
+    salt: crypto.randomBytes(16),
     cookie: {
       path: '/',
     },
   });
+  app.register(fastifyFormBody);
   app.register(fastifyFlash);
+  app.register(fastifyMethodOverride);
   app.register(fastifyTypeORM, ormconfig)
     .after((err) => {
       if (err) throw err;
@@ -118,6 +134,7 @@ export default () => {
 
   const app = fastify({
     logger: {
+      level: isTesting ? 'warn' : 'info',
       prettyPrint: isDevelopment,
       timestamp: !isDevelopment,
       base: null,
