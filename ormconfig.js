@@ -17,6 +17,7 @@ const config = {
   },
 };
 
+console.log('ENV', process.env.DATABASE_URL);
 switch (env) {
   case 'development':
     config.type = 'sqlite';
