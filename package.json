@@ -29,6 +29,11 @@
   "homepage": "https://github.com/SaenkoJr/backend-project-lvl4#readme",
   "dependencies": {
     "@babel/node": "^7.8.3",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-proposal-decorators": "^7.8.3",
+    "@babel/plugin-proposal-pipeline-operator": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "@babel/preset-typescript": "^7.10.1",
     "autoprefixer": "^9.8.0",
     "bootstrap": "^4.5.0",
     "class-validator": "^0.12.2",
@@ -61,11 +66,6 @@
   "devDependencies": {
     "@babel/cli": "^7.8.3",
     "@babel/core": "^7.8.3",
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
-    "@babel/plugin-proposal-decorators": "^7.8.3",
-    "@babel/plugin-proposal-pipeline-operator": "^7.8.3",
-    "@babel/preset-env": "^7.8.3",
-    "@babel/preset-typescript": "^7.10.1",
     "@types/node": "^14.0.11",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^25.1.0",
