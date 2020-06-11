@@ -2,9 +2,6 @@
   "name": "taks-manager-saenkomm",
   "version": "0.0.1",
   "description": "4th hexlet project",
-  "engines": {
-    "node": ">=13"
-  },
   "scripts": {
     "test": "jest",
     "build-configs": "babel ormconfig.js webpack.config.js --out-dir dist",
