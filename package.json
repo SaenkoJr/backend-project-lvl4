@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "4th hexlet project",
   "engines": {
-    "node": ">=13"
+    "node": ">=12"
   },
   "scripts": {
     "test": "jest",
