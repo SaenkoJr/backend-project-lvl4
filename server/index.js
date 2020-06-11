@@ -86,7 +86,6 @@ const addHooks = (app) => {
       req.currentUser = new Guest();
     }
 
-
     if (req.body) {
       req.log.info({ body: req.body }, 'parsed body');
     }
