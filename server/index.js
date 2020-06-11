@@ -81,7 +81,6 @@ const addHooks = (app) => {
     if (userId) {
       req.currentUser = await User.findOne(userId);
       req.signedIn = true;
-      req.log.info(`${req.raw.method} | ${req.raw.url} | ${userId}`, '||| METHOD | USER ID !');
     } else {
       req.currentUser = new Guest();
     }

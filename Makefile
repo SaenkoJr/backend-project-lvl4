@@ -27,3 +27,8 @@ test-watch:
 
 test-coverage:
 	yarn run test --coverage --detectOpenHandles
+
+migrations-run:
+	yarn migration:run
+
+.PHONY: test

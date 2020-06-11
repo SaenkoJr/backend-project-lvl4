@@ -1,1 +1,2 @@
-npm run start
+release: make migrations-run
+web: npm run start

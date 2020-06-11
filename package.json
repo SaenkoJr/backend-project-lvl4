@@ -13,7 +13,9 @@
     "build": "rm -rf dist && npm run build-frontend && npm run build-server",
     "start": "NODE_ENV=production node dist/server/bin/server.js",
     "develop": "npx nodemon --exec DEBUG=application:* npx babel-node server/bin/server.js",
-    "typeorm": "npx babel-node ./node_modules/.bin/typeorm"
+    "typeorm": "npx babel-node ./node_modules/.bin/typeorm",
+    "migration:run": "npm run typeorm migration:run",
+    "migration:gen": "npm run typeorm migration:generate"
   },
   "repository": {
     "type": "git",
