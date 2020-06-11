@@ -8,13 +8,12 @@
   "scripts": {
     "test": "jest",
     "build-configs": "babel ormconfig.js webpack.config.js --out-dir dist",
-    "build-server": "NODE_ENV=production babel server --out-dir dist/server --source-maps inline && npm run build-configs && cp -r server/views dist/server/views",
+    "build-server": "NODE_ENV=production babel --extensions .ts --extensions .js server --out-dir dist/server --source-maps inline && npm run build-configs && cp -r server/views dist/server/views",
     "build-frontend": "NODE_ENV=production npx webpack -p",
     "build": "rm -rf dist && npm run build-frontend && npm run build-server",
     "start": "NODE_ENV=production node dist/server/bin/server.js",
     "develop": "npx nodemon --exec DEBUG=application:* npx babel-node server/bin/server.js",
-    "migration:compile": "npx tsc server/migration/*.ts --target es5  --outDir dist/server/migration",
-    "typeorm": "npx babel-node ./node_modules/.bin/typeorm"  
+    "typeorm": "npx babel-node ./node_modules/.bin/typeorm"
   },
   "repository": {
     "type": "git",
@@ -64,6 +63,7 @@
     "@babel/plugin-proposal-decorators": "^7.8.3",
     "@babel/plugin-proposal-pipeline-operator": "^7.8.3",
     "@babel/preset-env": "^7.8.3",
+    "@babel/preset-typescript": "^7.10.1",
     "@types/node": "^14.0.11",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^25.1.0",
