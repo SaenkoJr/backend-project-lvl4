@@ -2,7 +2,7 @@ const env = process.env.NODE_ENV || 'development';
 
 const config = {
   entities: [
-    'server/entity/**/*.js',
+    `${__dirname}/server/entity/**/*.js`,
   ],
   migrations: [
     'server/migration/*.js',
