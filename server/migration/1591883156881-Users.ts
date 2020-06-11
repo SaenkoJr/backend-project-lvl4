@@ -4,7 +4,6 @@ export class Users1591883156881 implements MigrationInterface {
     name = 'Users1591883156881'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-      console.log('UP !!!')
         await queryRunner.query(`CREATE TABLE "temporary_user" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "email" varchar NOT NULL, "passwordDigest" varchar NOT NULL, "firstName" varchar NOT NULL, "lastName" varchar NOT NULL, "createdAt" datetime NOT NULL DEFAULT (datetime('now')), "updatedAt" datetime NOT NULL DEFAULT (datetime('now')), CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE ("email"))`);
         await queryRunner.query(`INSERT INTO "temporary_user"("id", "email", "passwordDigest") SELECT "id", "email", "passwordDigest" FROM "user"`);
         await queryRunner.query(`DROP TABLE "user"`);
