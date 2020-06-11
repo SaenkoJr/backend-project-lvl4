@@ -1,1 +1,1 @@
-npm run-script start
+npm run start
