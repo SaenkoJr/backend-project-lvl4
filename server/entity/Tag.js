@@ -9,7 +9,7 @@ import { IsNotEmpty } from 'class-validator';
 
 @Entity('tags')
 class Tag extends BaseEntity {
-  @PrimaryGeneratedColumn({ type: 'integer' })
+  @PrimaryGeneratedColumn()
   id;
 
   @Column({ type: 'varchar', unique: true })

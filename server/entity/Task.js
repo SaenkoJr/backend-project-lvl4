@@ -13,7 +13,7 @@ import { IsNotEmpty } from 'class-validator';
 
 @Entity('tasks')
 class Task extends BaseEntity {
-  @PrimaryGeneratedColumn({ type: 'integer' })
+  @PrimaryGeneratedColumn()
   id;
 
   @Column('varchar')
