@@ -141,6 +141,7 @@ export default () => {
     querystringParser: (str) => qs.parse(str),
   });
 
+  app.log.info(process.env.NODE_ENV, 'ENV');
   if (isProduction) {
     setupErrorHandler(app);
   }
