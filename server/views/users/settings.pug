@@ -4,10 +4,10 @@ block header
   = t('views.users.settings.settings')
 
 block content
-  +formFor(user)(action=`/users/${user.id}` method='post')
-    +input(user, 'firstName', errors)(type='text')
-    +input(user, 'lastName', errors)(type='text')
-    +input(user, 'email', errors)(type='text')
+  +formFor(user)(action=`/users/settings` method='post')
+    +input(user, 'firstName', t('views.users.new.firstName'), errors)(type='text')
+    +input(user, 'lastName', t('views.users.new.lastName'), errors)(type='text')
+    +input(user, 'email', t('views.users.new.email'), errors)(type='text')
     input(type='hidden' name='_method' value='patch')
     +submit(user)(value=t('views.users.settings.update'))
   +buttonTo(`/users/${user.id}`, 'delete')(

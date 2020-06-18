@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { IsNotEmpty, IsEmail } from 'class-validator';
 
-@Entity()
+@Entity('users')
 class User extends BaseEntity {
   isGuest = false;
 
@@ -28,7 +28,7 @@ class User extends BaseEntity {
   @IsNotEmpty()
   email;
 
-  @Column('varchar')
+  @Column({ type: 'varchar' })
   @IsNotEmpty()
   passwordDigest;
 

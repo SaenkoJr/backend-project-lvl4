@@ -1,0 +1,66 @@
+extends ../layouts/application.pug
+
+block content
+  - const currentUser = reply.request.currentUser;
+  - const getFullName = (user) => `${user.lastName} ${user.firstName}`;
+  - const { assignedToId, statusId, tagsIds = [] } = reply.request.query;
+
+  form#filters(action=route('tasks') method='get')
+    .form-row
+      .col-3.form-group
+        label(for='assignedTo')= t('views.tasks.list.assignedTo')
+        select#assignedTo.form-control(name='assignedToId')
+          option(selected value='all')= t('views.tasks.list.all')
+          option(value=currentUser.id selected=currentUser.id === Number(assignedToId))= t('views.tasks.list.my')
+          each user in users
+            option(value=user.id selected=user.id === Number(assignedToId))= `${user.firstName} ${user.lastName}`
+      .col-3.form-group
+        label(for='status')= t('views.tasks.list.status')
+        select#status.form-control(name='statusId')
+          option(selected value='all')= t('views.tasks.list.all')
+          each status in statuses
+            option(value=status.id selected=status.id === Number(statusId))= status.name
+    .form-row
+      each tag in tags
+        .col-1.form-group
+          .form-check
+            input.form-check-input(
+              id=`tag[${tag.id}]`
+              type='checkbox'
+              name='tagsIds[]'
+              value=tag.id
+              checked=tagsIds.includes(tag.id.toString())
+            )
+            label.form-check-label(for=`tag[${tag.id}]`)= tag.name
+    .form-row
+      .col
+        button.btn.btn-info(form='filters' type='submit')= t('views.tasks.list.filter')
+  hr
+  .row
+    .col.mb-4
+      a.btn.btn-primary(href=route('newTask'))= t('views.tasks.list.new')
+  .row.row-cols-1.row-cols-md-3
+    each task in tasks
+      .col.mb-4
+        .card
+          .card-body
+            h5.card-title= task.name
+            p.card-text= _.get(task, 'description', '-')
+            p.card-text= `${t('views.tasks.list.creator')}: `
+              small.text-muted= `${getFullName(task.creator)}`
+            p.card-text= `${t('views.tasks.list.assignedTo')}: `
+              small.text-muted= `${task.assignedTo ?  getFullName(task.assignedTo) : '-'}`
+            p.card-text= `${t('views.tasks.list.status')}: `
+              span.badge.badge-info= `${task.status.name}`
+            a.btn.btn-link.btn-sm(href=`/tasks/${task.id}/edit`)= t('views.tasks.list.edit')
+            +buttonTo(`/tasks/${task.id}`, 'delete')(
+              class='btn btn-link btn-sm'
+              value=t('views.tasks.list.delete')
+              style='color: red;'
+            )
+            .row
+              each tag in task.tags
+                .col-2.mb-2
+                  span.badge.badge-pill.badge-primary= tag.name
+          .card-footer
+            small.text-muted= `${t('views.tasks.list.lastUpdate')}: ${new Date(task.updatedAt).toDateString()}`

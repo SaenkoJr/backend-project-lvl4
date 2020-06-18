@@ -4,10 +4,10 @@ mixin formFor(entity = null)
   form&attributes(attributes)
     block
 
-mixin input(entity, propertyName, errors = [])
+mixin input(entity, propertyName, label, errors = [])
   - error = errors.find((error) => error.property === propertyName)
   .form-group(class=(errors[propertyName] && 'has-danger'))
-    label= t(`views.users.new.${propertyName}`)
+    label= label
     input(
       name=getInputName(entity, propertyName)
       class='form-control'
@@ -15,6 +15,18 @@ mixin input(entity, propertyName, errors = [])
     )&attributes(attributes)
     if error
       .form-control-feedback= Object.values(error.constraints).join('. ')
+
+mixin tagsInput(tags)
+  .form-group
+    label= t('views.tasks.new.tags')
+    - const tagsStr = tags ? tags.map((tag) => tag.name).join(', ') : '';
+    input(
+      name='task[tags]'
+      class='form-control'
+      value=tagsStr
+      placeholder=t('views.tasks.new.tagsPlaceholder')
+    )&attributes(attributes)
+
 
 mixin submit(form = null)
   .form-group

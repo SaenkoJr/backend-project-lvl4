@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import path from 'path';
+import qs from 'qs';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
 import Rollbar from 'rollbar';
@@ -95,7 +96,6 @@ const addHooks = (app) => {
 };
 
 const registerPlugins = (app) => {
-  app.register(fastifyErrorPage);
   app.register(fastifyReverseRoutes);
   app.register(fastifySecureSession, {
     secret: process.env.SESSION_SECRET,
@@ -111,6 +111,9 @@ const registerPlugins = (app) => {
     .after((err) => {
       if (err) throw err;
     });
+  if (isDevelopment) {
+    app.register(fastifyErrorPage);
+  }
 };
 
 const setupErrorHandler = (app) => {
@@ -137,6 +140,7 @@ export default () => {
       timestamp: !isDevelopment,
       base: null,
     },
+    querystringParser: (str) => qs.parse(str),
   });
 
   if (isProduction) {

@@ -42,10 +42,10 @@ export default (app) => {
       reply.render('users/settings', { user });
       return reply;
     })
-    .patch('/users/:id', { name: 'updateUser' }, async (req, reply) => {
-      const { id } = req.params;
+    .patch('/users/settings', { name: 'updateUser' }, async (req, reply) => {
+      const id = req.session.get('userId');
 
-      if (req.session.get('userId') !== Number(id)) {
+      if (!id) {
         req.flash('error', i18next.t('flash.users.access.denied'));
         return reply.redirect(app.reverse('root'));
       }
@@ -56,14 +56,14 @@ export default (app) => {
       const errors = await validate(updatedUser);
       if (!_.isEmpty(errors)) {
         req.flash('error', i18next.t('flash.users.update.error'));
-        reply.code(400).render(app.reverse('settings'), { updatedUser, errors });
+        reply.code(422).render('users/settings', { user: updatedUser, errors });
         return reply;
       }
 
       await updatedUser.save();
 
       req.flash('info', i18next.t('flash.users.update.success'));
-      reply.redirect(app.reverse('settings'), { updatedUser });
+      reply.redirect(app.reverse('settings'));
       return reply;
     })
     .delete('/users/:id', async (req, reply) => {
@@ -72,13 +72,7 @@ export default (app) => {
 
       if (req.session.get('userId') !== Number(id)) {
         req.flash('error', i18next.t('flash.users.access.denied'));
-        console.log('from delete', user);
         return reply.redirect(302, app.reverse('root'));
-      }
-
-      if (!user) {
-        req.flash('error', i18next.t('flash.users.delete.notFound'));
-        return reply.redirect(app.reverse('root'));
       }
 
       await User.remove(user);

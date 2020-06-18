@@ -1,0 +1,21 @@
+extends ../layouts/application.pug
+
+block content
+  table.table.table-striped
+    thead
+      tr
+        th= t('views.statuses.list.id')
+        th= t('views.statuses.list.name')
+        th= t('views.statuses.list.createdAt')
+        th= t('views.statuses.list.actions')
+    tbody
+      each status in statuses
+        tr
+          td= status.id
+          td= status.name
+          td= new Date(status.createdAt).toDateString()
+          td.form-inline
+            a(href=`/statuses/${status.id}/edit`)= t('views.statuses.list.edit')
+            +buttonTo(`/statuses/${status.id}`, 'delete')(class='btn btn-link'
+            value=t('views.statuses.list.delete'))
+  a.btn.btn-primary(href=route('newStatus'))= t('views.statuses.list.new')

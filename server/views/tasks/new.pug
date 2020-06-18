@@ -1,0 +1,22 @@
+extends ../layouts/application.pug
+
+block header
+  = t('views.tasks.new.title')
+
+block content
+  +formFor()(action=route('tasks') method='post')
+    +input(task, 'name', t('views.tasks.new.name'), errors)(type='text')
+    +input(task, 'description', t('views.tasks.new.description'), errors)(type='text')
+    .form-group
+      label= t('views.tasks.new.status')
+      select.form-control(name='task[statusId]')
+        each status in statuses
+          option(value=status.id)= status.name
+    .form-group
+      label= t('views.tasks.new.assignedTo')
+      select.form-control(name='task[assignedToId]')
+        option(value='')= t('views.tasks.new.assignedTo')
+        each user in users
+          option(value=user.id)= `${user.firstName} ${user.lastName}`
+    +tagsInput(tags)(type='text')
+    +submit(task)(value=t('views.tasks.new.submit'))

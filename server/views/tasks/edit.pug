@@ -1,0 +1,25 @@
+extends ../layouts/application.pug
+
+block header
+  = t('views.tasks.update.title')
+
+block content
+  +formFor()(action=`/tasks/${task.id}` method='post')
+    +input(task, 'name', t('views.tasks.update.name'), errors)(type='text')
+    +input(task, 'description', t('views.tasks.update.description'), errors)(type='text')
+    .form-group
+      label= t('views.tasks.update.status')
+      select.form-control(name='task[statusId]')
+        each status in statuses
+          - const isSelected = status.id === _.get(task, 'status.id', '');
+          option(value=status.id selected=isSelected)= status.name
+    .form-group
+      label= t('views.tasks.update.assignedTo')
+      select.form-control(name='task[assignedToId]')
+        option(value='')= t('views.tasks.update.assignedTo')
+        each user in users
+          - const isSelected = user.id === _.get(task, 'assignedTo.id', '');
+          option(value=user.id selected=isSelected)= `${user.firstName} ${user.lastName}`
+    +tagsInput(task.tags)(type='text')
+    input(type='hidden' name='_method' value='patch')
+    +submit(task)(value=t('views.tasks.update.submit'))

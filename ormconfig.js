@@ -5,7 +5,7 @@ const config = {
     `${__dirname}/server/entity/**/*.js`,
   ],
   migrations: [
-    'server/migration/*.js',
+    `${__dirname}/server/migration/*.js`,
   ],
   subscribers: [
     'server/subscriber/*.js',

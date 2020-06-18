@@ -5,6 +5,7 @@ import User from '../server/entity/User';
 
 describe('User', () => {
   let server;
+  let sessisonCookie;
 
   const buildUser = () => ({
     firstName: faker.name.firstName(),
@@ -13,8 +14,31 @@ describe('User', () => {
     password: faker.internet.password(8),
   });
 
+  const mainUser = buildUser();
+
   beforeAll(() => {
     server = app();
+  });
+
+  beforeEach(async () => {
+    await server.inject({
+      method: 'POST',
+      url: '/users',
+      body: { user: mainUser },
+    });
+
+    const { cookies } = await server.inject({
+      method: 'POST',
+      url: '/session',
+      body: {
+        object: {
+          email: mainUser.email,
+          password: mainUser.password,
+        },
+      },
+    });
+
+    sessisonCookie = cookies[0].value;
   });
 
   it('GET /users 200', async () => {
@@ -38,74 +62,18 @@ describe('User', () => {
     const users = await User.find();
 
     expect(res.statusCode).toBe(302);
-    expect(users).toHaveLength(1);
+    expect(users).toHaveLength(2);
   });
 
-  it('DELETE /users/:id', async () => {
-    const user1 = buildUser();
-    const user2 = buildUser();
-
-    await server.inject({
-      method: 'POST',
-      url: '/users',
-      body: {
-        user: user1,
-      },
-    });
-    await server.inject({
-      method: 'POST',
-      url: '/users',
-      body: {
-        user: user2,
-      },
-    });
-
-    const { email, password } = user1;
+  it('PATCH /users/settings', async () => {
+    const { email } = mainUser;
     const { id } = await User.findOne({ email });
-
-    const sessionRes = await server.inject({
-      method: 'POST',
-      url: '/session',
-      body: { object: { email, password } },
-    });
-
-    const res = await server.inject({
-      method: 'DELETE',
-      url: `/users/${id}`,
-      cookies: {
-        session: sessionRes.cookies[0].value,
-      },
-    });
-
-    const users = await User.find();
-
-    expect(res.statusCode).toBe(302);
-    expect(users).toHaveLength(1);
-  });
-
-  it('PATCH /users/:id', async () => {
-    const user = buildUser();
-
-    await server.inject({
-      method: 'POST',
-      url: '/users',
-      body: { user },
-    });
-
-    const { email, password } = user;
-    const { id } = await User.findOne({ email });
-
-    const sessionRes = await server.inject({
-      method: 'POST',
-      url: '/session',
-      body: { object: { email, password } },
-    });
 
     const res = await server.inject({
       method: 'PATCH',
-      url: `/users/${id}`,
+      url: '/users/settings',
       cookies: {
-        session: sessionRes.cookies[0].value,
+        session: sessisonCookie,
       },
       body: {
         user: {
@@ -114,10 +82,55 @@ describe('User', () => {
       },
     });
 
-    const updatedUser = await User.findOne({ email });
+    const updatedUser = await User.findOne({ id });
 
     expect(res.statusCode).toBe(302);
-    expect(updatedUser.firstName).not.toBe(user.firstName);
+    expect(updatedUser.firstName).not.toBe(mainUser.firstName);
+  });
+
+  it('PATCH /users/settings 422', async () => {
+    const res = await server.inject({
+      method: 'PATCH',
+      url: '/users/settings',
+      cookies: {
+        session: sessisonCookie,
+      },
+      body: {
+        user: {
+          firstName: '',
+        },
+      },
+    });
+
+    expect(res.statusCode).toBe(422);
+  });
+
+  it('DELETE /users/:id', async () => {
+    const user2 = buildUser();
+
+    await server.inject({
+      method: 'POST',
+      url: '/users',
+      body: {
+        user: user2,
+      },
+    });
+
+    const { email } = mainUser;
+    const { id } = await User.findOne({ email });
+
+    const res = await server.inject({
+      method: 'DELETE',
+      url: `/users/${id}`,
+      cookies: {
+        session: sessisonCookie,
+      },
+    });
+
+    const users = await User.find();
+
+    expect(res.statusCode).toBe(302);
+    expect(users).toHaveLength(1);
   });
 
   afterEach(async () => {
