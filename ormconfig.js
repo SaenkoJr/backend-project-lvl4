@@ -39,7 +39,6 @@ switch (env) {
     config.migrationsRun = true;
     config.logger = 'info';
     config.logging = true;
-    config.ssl = true;
     break;
   default:
     throw new Error(`Unexpected environment: ${env}`);
