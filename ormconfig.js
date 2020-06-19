@@ -44,7 +44,4 @@ switch (env) {
     throw new Error(`Unexpected environment: ${env}`);
 }
 
-console.log('ENV !!!!!!!!!!!!!!!!!!!!!!111', env);
-console.log('ENV !!!!!!!!!!!!!!!!!!!!!!111', __dirname);
-
 module.exports = config;
