@@ -34,7 +34,12 @@ switch (env) {
     break;
   case 'production':
     config.type = 'postgres';
-    config.url = process.env.DATABASE_URL;
+    config.url = process.env.DATABASE_URL || '';
+    config.database = process.env.DB_DATABASE;
+    config.host = process.env.DB_HOST;
+    config.port = process.env.DB_PORT;
+    config.username = process.env.DB_USER;
+    config.password = process.env.DB_PASSWORD;
     config.synchronize = false;
     config.migrationsRun = true;
     config.logger = 'info';
