@@ -5,7 +5,7 @@ const config = {
     `${__dirname}/server/entity/**/*.js`,
   ],
   migrations: [
-    'server/migration/*.js',
+    'dist/server/migration/*.js',
   ],
   subscribers: [
     'server/subscriber/*.js',
@@ -17,7 +17,6 @@ const config = {
   },
 };
 
-console.log('ENV !!!!!!!!!!!!!!!!!!!!!!111', env);
 switch (env) {
   case 'development':
     config.type = 'sqlite';
@@ -44,5 +43,7 @@ switch (env) {
   default:
     throw new Error(`Unexpected environment: ${env}`);
 }
+
+console.log('ENV !!!!!!!!!!!!!!!!!!!!!!111', env);
 
 module.exports = config;
