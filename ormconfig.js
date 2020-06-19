@@ -36,7 +36,7 @@ switch (env) {
     config.type = 'postgres';
     config.url = process.env.DATABASE_URL;
     config.synchronize = false;
-    config.migrationsRun = false;
+    config.migrationsRun = true;
     config.logger = 'info';
     config.logging = true;
     break;
