@@ -28,7 +28,8 @@ test-watch:
 test-coverage:
 	yarn run test --coverage --detectOpenHandles
 
-migrations-run:
+migrations-setup:
+	yarn typeorm migration:generate -n Updated
 	yarn migration:run
 
 .PHONY: test
