@@ -29,7 +29,7 @@ test-coverage:
 	yarn run test --coverage --detectOpenHandles
 
 migrations-setup:
-	yarn typeorm scheme:drop
+	yarn typeorm schema:drop
 	yarn typeorm migration:generate -n Updated
 	yarn migration:run
 
