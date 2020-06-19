@@ -17,6 +17,7 @@ const config = {
   },
 };
 
+console.log('ENV !!!!!!!!!!!!!!!!!!!!!!111', env);
 switch (env) {
   case 'development':
     config.type = 'sqlite';
@@ -36,7 +37,7 @@ switch (env) {
     config.type = 'postgres';
     config.url = process.env.DATABASE_URL;
     config.synchronize = false;
-    config.migrationsRun = true;
+    config.migrationsRun = false;
     config.logger = 'info';
     config.logging = true;
     break;
