@@ -102,6 +102,34 @@ describe('Statuses', () => {
     expect(res.statusCode).toBe(422);
   });
 
+  it('POST /statuses 400. Create status with existing name', async () => {
+    const name = faker.name.title();
+
+    await server.inject({
+      method: 'POST',
+      url: '/statuses',
+      cookies: {
+        session: sessisonCookie,
+      },
+      body: {
+        taskstatus: { name },
+      },
+    });
+
+    const res = await server.inject({
+      method: 'POST',
+      url: '/statuses',
+      cookies: {
+        session: sessisonCookie,
+      },
+      body: {
+        taskstatus: { name },
+      },
+    });
+
+    expect(res.statusCode).toBe(400);
+  });
+
   it('PATCH /statuses/:id', async () => {
     const name = faker.name.title();
 
@@ -165,6 +193,49 @@ describe('Statuses', () => {
     });
 
     expect(res.statusCode).toBe(422);
+  });
+
+  it('PATCH /statuses/:id 400. Update status with existing name', async () => {
+    const name1 = faker.name.title();
+    const name2 = faker.name.title();
+
+    await server.inject({
+      method: 'POST',
+      url: '/statuses',
+      cookies: {
+        session: sessisonCookie,
+      },
+      body: {
+        taskstatus: { name: name1 },
+      },
+    });
+
+    await server.inject({
+      method: 'POST',
+      url: '/statuses',
+      cookies: {
+        session: sessisonCookie,
+      },
+      body: {
+        taskstatus: { name: name2 },
+      },
+    });
+
+    const { id } = await TaskStatus.findOne({ name: name2 });
+    const res = await server.inject({
+      method: 'PATCH',
+      url: `/statuses/${id}`,
+      cookies: {
+        session: sessisonCookie,
+      },
+      body: {
+        taskstatus: {
+          name: name1,
+        },
+      },
+    });
+
+    expect(res.statusCode).toBe(400);
   });
 
   it('DELETE /statuses/:id', async () => {

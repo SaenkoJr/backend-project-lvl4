@@ -65,6 +65,31 @@ describe('User', () => {
     expect(users).toHaveLength(2);
   });
 
+  it('POST /users 400. Create user with existing email', async () => {
+    const user = buildUser();
+
+    await server.inject({
+      method: 'POST',
+      url: '/users',
+      body: {
+        user,
+      },
+    });
+
+    const res = await server.inject({
+      method: 'POST',
+      url: '/users',
+      body: {
+        user,
+      },
+    });
+
+    const users = await User.find();
+
+    expect(res.statusCode).toBe(400);
+    expect(users).toHaveLength(2);
+  });
+
   it('PATCH /users/settings', async () => {
     const { email } = mainUser;
     const { id } = await User.findOne({ email });
@@ -103,6 +128,33 @@ describe('User', () => {
     });
 
     expect(res.statusCode).toBe(422);
+  });
+
+  it('PATCH /users/settings 400. Update user with existing email. ', async () => {
+    const user = buildUser();
+
+    await server.inject({
+      method: 'POST',
+      url: '/users',
+      body: {
+        user,
+      },
+    });
+
+    const res = await server.inject({
+      method: 'PATCH',
+      url: '/users/settings',
+      cookies: {
+        session: sessisonCookie,
+      },
+      body: {
+        user: {
+          email: user.email,
+        },
+      },
+    });
+
+    expect(res.statusCode).toBe(400);
   });
 
   it('DELETE /users/:id', async () => {
