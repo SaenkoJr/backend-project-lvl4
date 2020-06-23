@@ -102,7 +102,7 @@ describe('Statuses', () => {
     expect(res.statusCode).toBe(422);
   });
 
-  it('POST /statuses 400. Create status with existing name', async () => {
+  it('POST /statuses 422. Create status with existing name', async () => {
     const name = faker.name.title();
 
     await server.inject({
@@ -127,7 +127,7 @@ describe('Statuses', () => {
       },
     });
 
-    expect(res.statusCode).toBe(400);
+    expect(res.statusCode).toBe(422);
   });
 
   it('PATCH /statuses/:id', async () => {
@@ -195,7 +195,7 @@ describe('Statuses', () => {
     expect(res.statusCode).toBe(422);
   });
 
-  it('PATCH /statuses/:id 400. Update status with existing name', async () => {
+  it('PATCH /statuses/:id 422. Update status with existing name', async () => {
     const name1 = faker.name.title();
     const name2 = faker.name.title();
 
@@ -235,7 +235,7 @@ describe('Statuses', () => {
       },
     });
 
-    expect(res.statusCode).toBe(400);
+    expect(res.statusCode).toBe(422);
   });
 
   it('DELETE /statuses/:id', async () => {

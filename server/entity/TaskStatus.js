@@ -7,6 +7,9 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { IsNotEmpty } from 'class-validator';
+import i18next from 'i18next';
+
+import IsUnique from '../lib/validators';
 
 @Entity('task_statuses')
 class TaskStatus extends BaseEntity {
@@ -14,7 +17,8 @@ class TaskStatus extends BaseEntity {
   id;
 
   @Column({ type: 'varchar', unique: true })
-  @IsNotEmpty()
+  @IsNotEmpty({ message: () => i18next.t('flash.statuses.validate.notEmpty') })
+  @IsUnique({ message: () => i18next.t('flash.statuses.validate.nameIsTaken') })
   name;
 
   @CreateDateColumn()

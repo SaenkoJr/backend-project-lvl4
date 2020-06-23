@@ -6,15 +6,16 @@ mixin formFor(entity = null)
 
 mixin input(entity, propertyName, label, errors = [])
   - error = errors.find((error) => error.property === propertyName)
+  - const classes = ['form-control', error ? 'is-invalid' : ''].join(' ')
   .form-group(class=(errors[propertyName] && 'has-danger'))
     label= label
     input(
       name=getInputName(entity, propertyName)
-      class='form-control'
+      class=classes
       value=_.get(entity, propertyName, '')
     )&attributes(attributes)
     if error
-      .form-control-feedback= Object.values(error.constraints).join('. ')
+      .invalid-feedback.form-control-feedback= Object.values(error.constraints).join('. ')
 
 mixin tagsInput(tags)
   .form-group

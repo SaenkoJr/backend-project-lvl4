@@ -1821,6 +1821,11 @@ async@^2.6.2:
   dependencies:
     lodash "^4.17.14"
 
+async@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/async/-/async-3.2.0.tgz#b3a2685c5ebb641d3de02d161002c60fc9f85720"
+  integrity sha512-TR2mEZFVOj2pLStYxLht7TyfuRzaydfpxr3k9RpHIzMgw7A64dzsdqCxH1WJyQdoe8T10nDXd9wnEigmiuHIZw==
+
 async@~1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/async/-/async-1.2.1.tgz#a4816a17cd5ff516dfa2c7698a453369b9790de0"
@@ -3483,9 +3488,9 @@ escape-string-regexp@^2.0.0:
   integrity sha512-UpzcLCXolUWcNu5HtVMHYdXJjArjsF9C0aNnquZYY4uW/Vu0miy5YoWvbV345HauVvcAUnpRuhMMcqTcGOY2+w==
 
 escodegen@^1.14.1:
-  version "1.14.2"
-  resolved "https://registry.yarnpkg.com/escodegen/-/escodegen-1.14.2.tgz#14ab71bf5026c2aa08173afba22c6f3173284a84"
-  integrity sha512-InuOIiKk8wwuOFg6x9BQXbzjrQhtyXh46K9bqVTPzSo2FnyMBaYGBMC6PhQy7yxxil9vIedFBweQBMK74/7o8A==
+  version "1.14.3"
+  resolved "https://registry.yarnpkg.com/escodegen/-/escodegen-1.14.3.tgz#4e7b81fba61581dc97582ed78cab7f0e8d63f503"
+  integrity sha512-qFcX0XJkdg+PB3xjZZG/wKSuT1PnQWx57+TVSjIMmILd2yC/6ByYElPwJnslDsuWuSAp4AwJGumarAAmJch5Kw==
   dependencies:
     esprima "^4.0.1"
     estraverse "^4.2.0"
@@ -3968,11 +3973,12 @@ fastify-formbody@^3.2.0:
     fastify-plugin "^1.6.1"
     qs "^6.9.4"
 
-fastify-method-override@1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/fastify-method-override/-/fastify-method-override-1.1.2.tgz#977963076f7e3dd641927991ce3d4a5d6b32876a"
-  integrity sha512-CrxZzdx8XO8H/G3aQMWssAk8bpBiRjQZki/Qz89FgrccQEBUlbES3vSLPpfYUxwE5IbtuRQM78ZSXQi9FSu51g==
+fastify-method-override@^1.1.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/fastify-method-override/-/fastify-method-override-1.2.2.tgz#57627f196d5ed45fe5215ca7b1ccef7786b802b2"
+  integrity sha512-XCKFyZg6AzeJdyEwU0dvR8bKesYuJBloDt5vIdEp6VDWg8f8Em+44SFE51uoZWvDQozlbtci2ZTaHzpL01qOsA==
   dependencies:
+    async "^3.2.0"
     fastify-plugin "^1.6.1"
     http-errors "^1.7.3"
     lodash "^4.17.15"
@@ -4798,9 +4804,9 @@ i18next-node-fs-backend@^2.1.3:
     json5 "2.0.0"
 
 i18next@^19.4.5:
-  version "19.5.0"
-  resolved "https://registry.yarnpkg.com/i18next/-/i18next-19.5.0.tgz#b58d2359a402a29e589838b99b7af170e19a7824"
-  integrity sha512-IOJREFitdCfuRtFVFRomU30TG++mk6dIWHuk7wDJNAoXwJzQbWkxWClnA975loh1jLBnXYPUO6oFjiNwg5TV4g==
+  version "19.5.1"
+  resolved "https://registry.yarnpkg.com/i18next/-/i18next-19.5.1.tgz#d5fdc7b2dafd1a183f2188d65dfdb78ef9f35264"
+  integrity sha512-e6lGMiTyb51F9PPInUTTDg8YbwcWXZYX18svaX2NUUWEphJKP7oG5HMlbZ+K84AXqw4AeBnwRrOlS9ickqcCBg==
   dependencies:
     "@babel/runtime" "^7.10.1"
 

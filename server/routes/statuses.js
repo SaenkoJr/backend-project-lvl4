@@ -59,16 +59,9 @@ export default (app) => {
         return reply;
       }
 
-      try {
-        await status.save();
-        req.flash('info', i18next.t('flash.statuses.create.success'));
-        return reply.redirect(app.reverse('statuses'));
-      } catch (e) {
-        req.flash('error', i18next.t('flash.statuses.create.nameIsTaken'));
-        reply.code(400);
-        reply.render('taskStatuses/new', { status });
-        return reply;
-      }
+      await status.save();
+      req.flash('info', i18next.t('flash.statuses.create.success'));
+      return reply.redirect(app.reverse('statuses'));
     })
     .patch('/statuses/:id', async (req, reply) => {
       const userId = req.session.get('userId');
@@ -89,16 +82,9 @@ export default (app) => {
         return reply;
       }
 
-      try {
-        await updatedStatus.save();
-        req.flash('info', i18next.t('flash.statuses.update.success'));
-        return reply.redirect(app.reverse('statuses'));
-      } catch (e) {
-        req.flash('error', i18next.t('flash.statuses.create.nameIsTaken'));
-        reply.code(400);
-        reply.render('taskStatuses/edit', { status: updatedStatus });
-        return reply;
-      }
+      await updatedStatus.save();
+      req.flash('info', i18next.t('flash.statuses.update.success'));
+      return reply.redirect(app.reverse('statuses'));
     })
     .delete('/statuses/:id', async (req, reply) => {
       const userId = req.session.get('userId');

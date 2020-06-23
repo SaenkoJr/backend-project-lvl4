@@ -65,7 +65,7 @@ describe('User', () => {
     expect(users).toHaveLength(2);
   });
 
-  it('POST /users 400. Create user with existing email', async () => {
+  it('POST /users 422. Create user with existing email', async () => {
     const user = buildUser();
 
     await server.inject({
@@ -86,7 +86,7 @@ describe('User', () => {
 
     const users = await User.find();
 
-    expect(res.statusCode).toBe(400);
+    expect(res.statusCode).toBe(422);
     expect(users).toHaveLength(2);
   });
 
@@ -130,7 +130,7 @@ describe('User', () => {
     expect(res.statusCode).toBe(422);
   });
 
-  it('PATCH /users/settings 400. Update user with existing email. ', async () => {
+  it('PATCH /users/settings 422. Update user with existing email. ', async () => {
     const user = buildUser();
 
     await server.inject({
@@ -147,14 +147,10 @@ describe('User', () => {
       cookies: {
         session: sessisonCookie,
       },
-      body: {
-        user: {
-          email: user.email,
-        },
-      },
+      body: { user },
     });
 
-    expect(res.statusCode).toBe(400);
+    expect(res.statusCode).toBe(422);
   });
 
   it('DELETE /users/:id', async () => {

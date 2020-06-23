@@ -24,20 +24,13 @@ export default (app) => {
       const errors = await validate(user);
       if (!_.isEmpty(errors)) {
         req.flash('error', i18next.t('flash.users.create.error'));
-        reply.render('users/new', { user, errors });
+        reply.code(422).render('users/new', { user, errors });
         return reply;
       }
 
-      try {
-        await user.save();
-        req.flash('info', i18next.t('flash.users.create.success'));
-        return reply.redirect(app.reverse('root'));
-      } catch (e) {
-        req.flash('error', i18next.t('flash.users.create.emailIsTaken'));
-        reply.code(400);
-        reply.render('users/new', { user });
-        return reply;
-      }
+      await user.save();
+      req.flash('info', i18next.t('flash.users.create.success'));
+      return reply.redirect(app.reverse('root'));
     })
     .get('/users/settings', { name: 'settings' }, async (req, reply) => {
       if (req.currentUser.isGuest) {
@@ -67,17 +60,10 @@ export default (app) => {
         return reply;
       }
 
-      try {
-        await updatedUser.save();
-        req.flash('info', i18next.t('flash.users.update.success'));
-        reply.redirect(app.reverse('settings'));
-        return reply;
-      } catch (e) {
-        req.flash('error', i18next.t('flash.users.create.emailIsTaken'));
-        reply.code(400);
-        reply.render('users/settings', { user: updatedUser });
-        return reply;
-      }
+      await updatedUser.save();
+      req.flash('info', i18next.t('flash.users.update.success'));
+      reply.redirect(app.reverse('settings'));
+      return reply;
     })
     .delete('/users/:id', async (req, reply) => {
       const { id } = req.params;

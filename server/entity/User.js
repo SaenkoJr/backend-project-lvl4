@@ -7,6 +7,9 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { IsNotEmpty, IsEmail } from 'class-validator';
+import i18next from 'i18next';
+
+import IsUnique from '../lib/validators';
 
 @Entity('users')
 class User extends BaseEntity {
@@ -16,20 +19,21 @@ class User extends BaseEntity {
   id;
 
   @Column('varchar')
-  @IsNotEmpty()
+  @IsNotEmpty({ message: () => i18next.t('flash.users.validate.notEmpty') })
   firstName;
 
   @Column('varchar')
-  @IsNotEmpty()
+  @IsNotEmpty({ message: () => i18next.t('flash.users.validate.notEmpty') })
   lastName;
 
   @Column({ type: 'varchar', unique: true })
-  @IsEmail()
-  @IsNotEmpty()
+  @IsEmail({ message: () => i18next.t('flash.users.validate.isEmail') })
+  @IsNotEmpty({ message: () => i18next.t('flash.users.validate.notEmpty') })
+  @IsUnique({ message: () => i18next.t('flash.users.validate.emailIsTaken') })
   email;
 
   @Column({ type: 'varchar' })
-  @IsNotEmpty()
+  @IsNotEmpty({ message: () => i18next.t('flash.users.validate.notEmpty') })
   passwordDigest;
 
   @CreateDateColumn()
