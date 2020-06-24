@@ -9,7 +9,8 @@ import {
 import { IsNotEmpty, IsEmail } from 'class-validator';
 import i18next from 'i18next';
 
-import IsUnique from '../lib/validators';
+import IsUnique from '../lib/validators/IsUnique';
+import Match from '../lib/validators/Match';
 
 @Entity('users')
 class User extends BaseEntity {
@@ -19,21 +20,59 @@ class User extends BaseEntity {
   id;
 
   @Column('varchar')
-  @IsNotEmpty({ message: () => i18next.t('flash.users.validate.notEmpty') })
+  @IsNotEmpty({ groups: ['registration', 'update'], message: () => i18next.t('flash.users.validate.notEmpty') })
   firstName;
 
   @Column('varchar')
-  @IsNotEmpty({ message: () => i18next.t('flash.users.validate.notEmpty') })
+  @IsNotEmpty({ groups: ['registration', 'update'], message: () => i18next.t('flash.users.validate.notEmpty') })
   lastName;
 
   @Column({ type: 'varchar', unique: true })
-  @IsEmail({ message: () => i18next.t('flash.users.validate.isEmail') })
-  @IsNotEmpty({ message: () => i18next.t('flash.users.validate.notEmpty') })
-  @IsUnique({ message: () => i18next.t('flash.users.validate.emailIsTaken') })
+  @IsEmail({
+    groups: ['registration', 'update'],
+    message: () => i18next.t('flash.users.validate.isEmail'),
+  })
+  @IsNotEmpty({
+    groups: ['registration', 'update'],
+    message: () => i18next.t('flash.users.validate.notEmpty'),
+  })
+  @IsUnique({
+    groups: ['registration', 'update'],
+    message: () => i18next.t('flash.users.validate.emailIsTaken'),
+  })
   email;
 
+  @IsNotEmpty({
+    groups: ['security'],
+    message: () => i18next.t('flash.users.validate.notEmpty'),
+  })
+  @Match('passwordDigest', {
+    groups: ['security'],
+    message: () => i18next.t('flash.users.validate.oldPasswordNotMatch'),
+  })
+  oldPassword;
+
+  @IsNotEmpty({
+    groups: ['registration', 'security'],
+    message: () => i18next.t('flash.users.validate.notEmpty'),
+  })
+  password;
+
+  @IsNotEmpty({
+    groups: ['registration', 'security'],
+    message: () => i18next.t('flash.users.validate.notEmpty'),
+  })
+  @Match('password', {
+    groups: ['registration', 'security'],
+    message: () => i18next.t('flash.users.validate.passwordNotMatch'),
+  })
+  repeatedPassword;
+
   @Column({ type: 'varchar' })
-  @IsNotEmpty({ message: () => i18next.t('flash.users.validate.notEmpty') })
+  @IsNotEmpty({
+    groups: ['registration', 'security'],
+    message: () => i18next.t('flash.users.validate.notEmpty'),
+  })
   passwordDigest;
 
   @CreateDateColumn()

@@ -1,4 +1,5 @@
 include ../mixins/forms.pug
+include ../mixins/modal.pug
 
 doctype html
 html(lang="en").h-100
@@ -23,7 +24,7 @@ html(lang="en").h-100
         ul.navbar-nav
           if reply.request.signedIn
             li.nav-item
-              a.nav-link(href=route('settings'))= t('layouts.application.settings')
+              a.nav-link(href=route('settings'))= t('layouts.application.profile')
             li.nav-item
               +buttonTo(route('session'), 'delete')(class="btn nav-link" value=t('layouts.application.signOut'))
           else
@@ -32,7 +33,6 @@ html(lang="en").h-100
             li.nav-item
               a.nav-link(href=route('newUser'))= t('layouts.application.signUp')
     .container.h-100
-
       each messages, type in reply.flash() || []
         each message in messages
           div.alert(class=`alert-${getAlertClass(type)}`)= message

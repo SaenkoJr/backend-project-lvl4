@@ -19,9 +19,10 @@ export default (app) => {
     .post('/users', async (req, reply) => {
       const user = User.create(req.body.user);
       user.password = req.body.user.password;
+      user.repeatedPassword = req.body.user.repeatedPassword;
       user.passwordDigest = encrypt(user.password);
 
-      const errors = await validate(user);
+      const errors = await validate(user, { groups: ['registration'] });
       if (!_.isEmpty(errors)) {
         req.flash('error', i18next.t('flash.users.create.error'));
         reply.code(422).render('users/new', { user, errors });
@@ -32,7 +33,7 @@ export default (app) => {
       req.flash('info', i18next.t('flash.users.create.success'));
       return reply.redirect(app.reverse('root'));
     })
-    .get('/users/settings', { name: 'settings' }, async (req, reply) => {
+    .get('/account/settings', { name: 'settings' }, async (req, reply) => {
       if (req.currentUser.isGuest) {
         req.flash('error', i18next.t('flash.users.access.denied'));
         return reply.redirect(app.reverse('root'));
@@ -42,7 +43,17 @@ export default (app) => {
       reply.render('users/settings', { user });
       return reply;
     })
-    .patch('/users/settings', { name: 'updateUser' }, async (req, reply) => {
+    .get('/account/security', { name: 'security' }, async (req, reply) => {
+      if (req.currentUser.isGuest) {
+        req.flash('error', i18next.t('flash.users.access.denied'));
+        return reply.redirect(app.reverse('root'));
+      }
+
+      const user = await User.findOne(req.currentUser.id);
+      reply.render('users/security', { user });
+      return reply;
+    })
+    .patch('/account/settings', { name: 'updateUser' }, async (req, reply) => {
       const id = req.session.get('userId');
 
       if (!id) {
@@ -53,7 +64,7 @@ export default (app) => {
       const user = await User.findOne(id);
       const updatedUser = User.merge(user, req.body.user);
 
-      const errors = await validate(updatedUser);
+      const errors = await validate(updatedUser, { groups: ['update'] });
       if (!_.isEmpty(errors)) {
         req.flash('error', i18next.t('flash.users.update.error'));
         reply.code(422).render('users/settings', { user: updatedUser, errors });
@@ -63,6 +74,36 @@ export default (app) => {
       await updatedUser.save();
       req.flash('info', i18next.t('flash.users.update.success'));
       reply.redirect(app.reverse('settings'));
+      return reply;
+    })
+    .patch('/account/security', { name: 'updatePassword' }, async (req, reply) => {
+      const id = req.session.get('userId');
+
+      if (!id) {
+        req.flash('error', i18next.t('flash.users.access.denied'));
+        return reply.redirect(app.reverse('root'));
+      }
+
+      const user = await User.findOne(id);
+
+      user.oldPassword = encrypt(req.body.user.oldPassword);
+      user.password = req.body.user.password;
+      user.repeatedPassword = req.body.user.repeatedPassword;
+
+      const errors = await validate(user, { groups: ['security'] });
+      if (!_.isEmpty(errors)) {
+        user.oldPassword = req.body.user.oldPassword;
+
+        req.flash('error', i18next.t('flash.users.update.error'));
+        reply.code(422).render('users/security', { user, errors });
+        return reply;
+      }
+
+      user.passwordDigest = encrypt(user.password);
+      await user.save();
+
+      req.flash('info', i18next.t('flash.users.update.success'));
+      reply.redirect(app.reverse('security'));
       return reply;
     })
     .delete('/users/:id', async (req, reply) => {

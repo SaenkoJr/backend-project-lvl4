@@ -16,6 +16,8 @@ module.exports = {
           isEmail: 'Некорректный адрес электронной почты',
           notEmpty: 'Необходимо заполнить поле',
           emailIsTaken: 'Такая почта уже используется',
+          oldPasswordNotMatch: 'Неверный пароль',
+          passwordNotMatch: 'Пароль не совпадает с новым',
         },
         create: {
           error: 'Не удалось зарегистрировать',
@@ -34,6 +36,9 @@ module.exports = {
         },
       },
       tasks: {
+        validate: {
+          notEmpty: 'Необходимо заполнить поле',
+        },
         create: {
           error: 'Не удалось создать задачу',
           success: 'Задача создана',
@@ -78,9 +83,17 @@ module.exports = {
         signIn: 'Вход',
         signUp: 'Регистрация',
         signOut: 'Выход',
-        settings: 'Настройки',
+        profile: 'Профиль',
         tasks: 'Задачи',
         statuses: 'Список статусов',
+      },
+    },
+    mixins: {
+      modal: {
+        warning: 'Внимание',
+        confirmMsg: 'Вы уверены что хотите продолжить ?',
+        confirm: 'Подтвердить',
+        close: 'Закрыть',
       },
     },
     views: {
@@ -93,6 +106,9 @@ module.exports = {
         },
       },
       users: {
+        list: {
+          empty: 'Ни одного пользователя еще не зарегистрировано',
+        },
         new: {
           submit: 'Сохранить',
           signUp: 'Регистрация',
@@ -110,6 +126,12 @@ module.exports = {
         },
         settings: {
           settings: 'Настройки',
+          common: 'Общие',
+          security: 'Безопасность',
+          oldPassword: 'Введите старый пароль',
+          newPassword: 'Введите новый пароль',
+          repeatedPassword: 'Повторите пароль',
+          changePassword: 'Изменить пароль',
           update: 'Обновить',
           delete: 'Удалить профиль',
         },
@@ -124,7 +146,9 @@ module.exports = {
           status: 'Статус',
           createdAt: 'Дата создания',
           lastUpdate: 'Дата последнего обновления',
-          new: 'Добавить статус',
+          tags: 'Тэги:',
+          empty: 'Ни одной задачи пока еще не создано',
+          new: 'Добавить задачу',
           edit: 'Редактировать',
           delete: 'Удалить',
         },
@@ -135,6 +159,7 @@ module.exports = {
           status: 'Статус',
           assignedTo: 'Исполнитель',
           tags: 'Тэги',
+          statusPlaceholder: 'Выбрать статус',
           tagsPlaceholder: 'Перечислите тэги через запятую',
           submit: 'Создать',
         },
@@ -145,6 +170,7 @@ module.exports = {
           status: 'Статус',
           assignedTo: 'Исполнитель',
           tags: 'Тэги',
+          statusPlaceholder: 'Выбрать статус',
           tagsPlaceholder: 'Перечислите тэги через запятую',
           submit: 'Применить',
         },
@@ -155,6 +181,7 @@ module.exports = {
           name: 'Название',
           createdAt: 'Дата создания',
           actions: 'Действия',
+          empty: 'Ни одного статуса пока еще не создано',
           new: 'Добавить статус',
           edit: 'Редактировать',
           delete: 'Удалить',

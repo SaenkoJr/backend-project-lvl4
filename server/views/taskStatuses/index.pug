@@ -1,7 +1,9 @@
 extends ../layouts/application.pug
 
 block content
-  table.table.table-striped
+  +confirmModal
+
+  table.table.table-striped.mb-4
     thead
       tr
         th= t('views.statuses.list.id')
@@ -9,13 +11,23 @@ block content
         th= t('views.statuses.list.createdAt')
         th= t('views.statuses.list.actions')
     tbody
-      each status in statuses
+      if statuses.length === 0
         tr
-          td= status.id
-          td= status.name
-          td= new Date(status.createdAt).toDateString()
-          td.form-inline
-            a(href=`/statuses/${status.id}/edit`)= t('views.statuses.list.edit')
-            +buttonTo(`/statuses/${status.id}`, 'delete')(class='btn btn-link'
-            value=t('views.statuses.list.delete'))
+          td.text-center.p-4(colspan=4)= t('views.statuses.list.empty')
+      else
+        each status in statuses
+          tr
+            td.align-middle= status.id
+            td.align-middle= status.name
+            td.align-middle= new Date(status.createdAt).toDateString()
+            td.form-inline
+              a.btn.btn-link(href=`/statuses/${status.id}/edit`)= t('views.statuses.list.edit')
+              button.btn.btn-link(
+                type='button'
+                style='color: red;'
+                data-toggle='modal'
+                data-target='#confirm'
+                data-method='delete'
+                data-action=`/statuses/${status.id}`
+              )= t('views.statuses.list.delete')
   a.btn.btn-primary(href=route('newStatus'))= t('views.statuses.list.new')

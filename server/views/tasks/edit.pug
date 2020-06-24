@@ -10,6 +10,7 @@ block content
     .form-group
       label= t('views.tasks.update.status')
       select.form-control(name='task[statusId]')
+        option(value='')= t('views.tasks.new.statusPlaceholder')
         each status in statuses
           - const isSelected = status.id === _.get(task, 'status.id', '');
           option(value=status.id selected=isSelected)= status.name

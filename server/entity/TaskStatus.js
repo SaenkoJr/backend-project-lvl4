@@ -9,7 +9,7 @@ import {
 import { IsNotEmpty } from 'class-validator';
 import i18next from 'i18next';
 
-import IsUnique from '../lib/validators';
+import IsUnique from '../lib/validators/IsUnique';
 
 @Entity('task_statuses')
 class TaskStatus extends BaseEntity {

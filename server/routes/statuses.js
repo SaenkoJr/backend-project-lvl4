@@ -77,7 +77,7 @@ export default (app) => {
 
       const errors = await validate(updatedStatus);
       if (!_.isEmpty(errors)) {
-        req.flash('error', i18next.t('flash.statuses.create.error'));
+        req.flash('error', i18next.t('flash.statuses.update.error'));
         reply.code(422).render('taskStatuses/edit', { status: updatedStatus, errors });
         return reply;
       }

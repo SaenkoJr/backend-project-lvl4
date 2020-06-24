@@ -1,0 +1,16 @@
+
+mixin confirmModal()
+  .modal#confirm(tabindex='-1' role='dialog')&attributes(attributes)
+    .modal-dialog
+      .modal-content
+        .modal-header
+          h5.modal-title= t('mixins.modal.warning')
+          button.close(type='button' data-dismiss='modal' aria-label='Close')
+            span(aria-hidden='true') &times;
+        .modal-body
+          p= t('mixins.modal.confirmMsg')
+        .modal-footer
+          form#actionForm(action=action, method="post")
+            input#method(name="_method" type="hidden" value=method)
+            button.btn.btn-danger.mr-2(type='submit')= t('mixins.modal.confirm')
+            button.btn.btn-primary(type='button' data-dismiss='modal')= t('mixins.modal.close')

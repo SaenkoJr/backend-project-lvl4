@@ -10,6 +10,7 @@ import {
   JoinTable,
 } from 'typeorm';
 import { IsNotEmpty } from 'class-validator';
+import i18next from 'i18next';
 
 @Entity('tasks')
 class Task extends BaseEntity {
@@ -17,7 +18,7 @@ class Task extends BaseEntity {
   id;
 
   @Column('varchar')
-  @IsNotEmpty()
+  @IsNotEmpty({ message: () => i18next.t('flash.tasks.validate.notEmpty') })
   name;
 
   @Column({ type: 'varchar', nullable: true })

@@ -10,10 +10,14 @@ block content
         th= t('views.users.user.email')
         th= t('views.users.user.createdAt')
     tbody
-      each user in users
+      if users.length === 0
         tr
-          td= user.id
-          td= user.firstName
-          td= user.lastName
-          td= user.email
-          td= new Date(user.createdAt).toDateString()
+          td.text-center.p-4(colspan=4)= t('views.users.list.empty')
+      else
+        each user in users
+          tr
+            td= user.id
+            td= user.firstName
+            td= user.lastName
+            td= user.email
+            td= new Date(user.createdAt).toDateString()

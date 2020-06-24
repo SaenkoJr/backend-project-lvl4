@@ -126,6 +126,7 @@ export default (app) => {
 
       const task = Task.create({ name, description });
 
+      const users = await User.find();
       const creator = await User.findOne(userId);
       const status = await TaskStatus.findOne(statusId);
       const tags = await createTags(tagsStr);
@@ -141,7 +142,9 @@ export default (app) => {
         const statuses = await TaskStatus.find();
 
         req.flash('error', i18next.t('flash.tasks.create.error'));
-        reply.render('tasks/new', { task, statuses, errors });
+        reply.render('tasks/new', {
+          task, statuses, users, errors,
+        });
         return reply;
       }
 

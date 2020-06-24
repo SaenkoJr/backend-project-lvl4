@@ -27,6 +27,7 @@ describe('Tasks', () => {
           lastName: faker.name.lastName(),
           email: authEmail,
           password: authPass,
+          repeatedPassword: authPass,
         },
       },
     });
