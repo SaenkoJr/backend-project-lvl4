@@ -50,6 +50,9 @@ describe('User', () => {
   it('GET /users 200', async () => {
     const res = await server.inject({
       method: 'GET',
+      cookies: {
+        session: sessisonCookie,
+      },
       url: '/users',
     });
 

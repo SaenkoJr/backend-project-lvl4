@@ -24,10 +24,10 @@ class Task extends BaseEntity {
   @Column({ type: 'varchar', nullable: true })
   description;
 
-  @ManyToOne(() => 'User', { eager: true, cascade: true })
+  @ManyToOne(() => 'User', (user) => user.createdTasks, { eager: true, cascade: true })
   creator;
 
-  @ManyToOne(() => 'User', { eager: true, cascade: true })
+  @ManyToOne(() => 'User', (user) => user.assignedTasks, { eager: true, cascade: true })
   assignedTo;
 
   @ManyToOne(() => 'TaskStatus', (status) => status.task, { eager: true, cascade: true })

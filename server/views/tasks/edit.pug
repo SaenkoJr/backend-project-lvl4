@@ -10,14 +10,14 @@ block content
     .form-group
       label= t('views.tasks.update.status')
       select.form-control(name='task[statusId]')
-        option(value='')= t('views.tasks.new.statusPlaceholder')
+        option(value='' disabled selected=statuses.length === 0)= t('views.tasks.new.statusPlaceholder')
         each status in statuses
           - const isSelected = status.id === _.get(task, 'status.id', '');
           option(value=status.id selected=isSelected)= status.name
     .form-group
       label= t('views.tasks.update.assignedTo')
       select.form-control(name='task[assignedToId]')
-        option(value='')= t('views.tasks.update.assignedTo')
+        option(value='' disabled selected)= t('views.tasks.new.assignedTo')
         each user in users
           - const isSelected = user.id === _.get(task, 'assignedTo.id', '');
           option(value=user.id selected=isSelected)= `${user.firstName} ${user.lastName}`

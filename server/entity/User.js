@@ -5,6 +5,7 @@ import {
   BaseEntity,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { IsNotEmpty, IsEmail } from 'class-validator';
 import i18next from 'i18next';
@@ -74,6 +75,12 @@ class User extends BaseEntity {
     message: () => i18next.t('flash.users.validate.notEmpty'),
   })
   passwordDigest;
+
+  @OneToMany(() => 'Task', (task) => task.creator)
+  createdTasks;
+
+  @OneToMany(() => 'Task', (task) => task.assignedTo)
+  assignedTasks;
 
   @CreateDateColumn()
   createdAt;

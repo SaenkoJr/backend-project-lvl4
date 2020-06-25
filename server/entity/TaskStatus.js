@@ -5,6 +5,7 @@ import {
   BaseEntity,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { IsNotEmpty } from 'class-validator';
 import i18next from 'i18next';
@@ -20,6 +21,9 @@ class TaskStatus extends BaseEntity {
   @IsNotEmpty({ message: () => i18next.t('flash.statuses.validate.notEmpty') })
   @IsUnique({ message: () => i18next.t('flash.statuses.validate.nameIsTaken') })
   name;
+
+  @OneToMany(() => 'Task', (task) => task.status)
+  tasks;
 
   @CreateDateColumn()
   createdAt;

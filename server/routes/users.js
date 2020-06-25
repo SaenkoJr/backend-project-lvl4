@@ -6,7 +6,14 @@ import User from '../entity/User';
 
 export default (app) => {
   app
-    .get('/users', { name: 'users' }, async (_req, reply) => {
+    .get('/users', { name: 'users' }, async (req, reply) => {
+      const userId = req.session.get('userId');
+
+      if (!userId) {
+        req.flash('error', i18next.t('flash.statuses.access.denied'));
+        return reply.redirect(app.reverse('root'));
+      }
+
       const users = await User.find();
       reply.render('users/index', { users });
       return reply;
@@ -108,11 +115,23 @@ export default (app) => {
     })
     .delete('/users/:id', async (req, reply) => {
       const { id } = req.params;
-      const user = await User.findOne(id);
+      const user = await User.findOne(id, { relations: ['createdTasks', 'assignedTasks'] });
 
       if (req.session.get('userId') !== Number(id)) {
         req.flash('error', i18next.t('flash.users.access.denied'));
         return reply.redirect(302, app.reverse('root'));
+      }
+
+      if (!_.isEmpty(user.assignedTasks)) {
+        req.flash('error', i18next.t('flash.users.delete.hasAssignedTasks'));
+        reply.redirect(app.reverse('settings'));
+        return reply;
+      }
+
+      if (!_.isEmpty(user.createdTasks)) {
+        req.flash('error', i18next.t('flash.users.delete.hasCreatedTasks'));
+        reply.redirect(app.reverse('settings'));
+        return reply;
       }
 
       await User.remove(user);

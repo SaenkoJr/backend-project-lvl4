@@ -1,4 +1,12 @@
 extends ../layouts/application.pug
 
 block content
-  .display-4= t('views.welcome.index.hello')
+  .row
+    .col.md-2.text-center
+      h2.display-4= t('views.welcome.index.greetings')
+  .row
+    .col.md-2.text-center
+      p= t('views.welcome.index.description')
+      a(href=route('newSession'))= t('views.welcome.index.signIn')
+      <br>
+      a(href=route('newUser'))= t('views.welcome.index.signUp')

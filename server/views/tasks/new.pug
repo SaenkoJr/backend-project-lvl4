@@ -10,13 +10,13 @@ block content
     .form-group
       label= t('views.tasks.new.status')
       select.form-control(name='task[statusId]')
-        option(value=null)= t('views.tasks.new.statusPlaceholder')
+        option(value='' disabled selected=statuses.length === 0)= t('views.tasks.new.statusPlaceholder')
         each status in statuses
-          option(value=status.id)= status.name
+          option(value=status.id selected=status.name.toLowerCase() === 'новый')= status.name
     .form-group
       label= t('views.tasks.new.assignedTo')
       select.form-control(name='task[assignedToId]')
-        option(value='')= t('views.tasks.new.assignedTo')
+        option(value='' disabled selected)= t('views.tasks.new.assignedTo')
         each user in users
           option(value=user.id)= `${user.firstName} ${user.lastName}`
     +tagsInput(tags)(type='text')

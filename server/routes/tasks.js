@@ -128,9 +128,9 @@ export default (app) => {
 
       const users = await User.find();
       const creator = await User.findOne(userId);
-      const status = await TaskStatus.findOne(statusId);
+      const status = statusId ? await TaskStatus.findOne(statusId) : null;
+      const assignedTo = assignedToId ? await User.findOne(assignedToId) : null;
       const tags = await createTags(tagsStr);
-      const assignedTo = await User.findOne(assignedToId);
 
       task.status = status;
       task.assignedTo = assignedTo;

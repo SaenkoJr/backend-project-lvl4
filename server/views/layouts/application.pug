@@ -14,9 +14,9 @@ html(lang="en").h-100
         span.navbar-toggler-icon
       .collapse.navbar-collapse
         ul.navbar-nav.mr-auto
-          li.nav-item
-            a.nav-link(href=route('users'))= t('layouts.application.users')
           if reply.request.signedIn
+            li.nav-item
+              a.nav-link(href=route('users'))= t('layouts.application.users')
             li.nav-item
               a.nav-link(href=route('tasks'))= t('layouts.application.tasks')
             li.nav-item

@@ -94,7 +94,13 @@ export default (app) => {
       }
 
       const { id } = req.params;
-      const status = await TaskStatus.findOne(id);
+      const status = await TaskStatus.findOne(id, { relations: ['tasks'] });
+
+      if (!_.isEmpty(status.tasks)) {
+        req.flash('error', i18next.t('flash.statuses.delete.relationsError'));
+        reply.redirect(app.reverse('statuses'));
+        return reply;
+      }
 
       await TaskStatus.remove(status);
 
