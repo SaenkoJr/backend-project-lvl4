@@ -152,23 +152,7 @@ describe('Tasks', () => {
     expect(task.tags).toHaveLength(2);
   });
 
-  it('POST /tasks with tags 302', async () => {
-    const title = faker.name.title();
-
-    await server.inject({
-      method: 'POST',
-      url: '/statuses',
-      cookies: {
-        session: sessisonCookie,
-      },
-      body: {
-        taskstatus: { name: 'new' },
-      },
-    });
-
-    const status = await TaskStatus.findOne({ name: 'new' });
-    const statusId = TaskStatus.getId(status);
-
+  it('POST /tasks with tags 422. Create task with empty fields', async () => {
     const res = await server.inject({
       method: 'POST',
       url: '/tasks',
@@ -177,21 +161,19 @@ describe('Tasks', () => {
       },
       body: {
         task: {
-          name: title,
+          name: '',
           description: '',
-          assignedToId: '',
-          statusId: '',
+          assignedToId: null,
+          statusId: null,
           tags: '',
         },
       },
     });
 
-    const task = await Task.findOne();
     const tasksCount = await Task.count();
 
-    expect(res.statusCode).toBe(302);
-    expect(tasksCount).toBe(1);
-    expect(task.tags).toHaveLength(2);
+    expect(res.statusCode).toBe(422);
+    expect(tasksCount).toBe(0);
   });
 
   it('PATCH /tasks/:id 302', async () => {

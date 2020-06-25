@@ -142,7 +142,7 @@ export default (app) => {
         const statuses = await TaskStatus.find();
 
         req.flash('error', i18next.t('flash.tasks.create.error'));
-        reply.render('tasks/new', {
+        reply.code(422).render('tasks/new', {
           task, statuses, users, errors,
         });
         return reply;
