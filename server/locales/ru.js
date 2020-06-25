@@ -116,6 +116,7 @@ module.exports = {
           lastName: 'Фамилия',
           email: 'Эл. почта',
           password: 'Пароль',
+          repeatedPassword: 'Повторите пароль',
         },
         user: {
           id: 'ID',

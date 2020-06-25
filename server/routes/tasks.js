@@ -133,9 +133,9 @@ export default (app) => {
       const assignedTo = await User.findOne(assignedToId);
 
       task.status = status;
-      task.tags = tags;
       task.assignedTo = assignedTo;
       task.creator = creator;
+      task.tags = tags;
 
       const errors = await validate(task);
       if (!_.isEmpty(errors)) {
@@ -160,32 +160,34 @@ export default (app) => {
       }
 
       const { id } = req.params;
-      const { assignedToId, statusId } = req.body.task;
+      const {
+        name, description, assignedToId, statusId, tags: tagsStr,
+      } = req.body.task;
 
       const task = await Task.findOne(id);
       const assignedTo = await User.findOne(assignedToId);
       const status = await TaskStatus.findOne(statusId);
+      const tags = await createTags(tagsStr);
 
-      const updatedTask = Task.merge(
-        task,
-        req.body.task,
-        { assignedTo },
-        { status },
-      );
+      task.name = name;
+      task.description = description;
+      task.assignedTo = assignedTo;
+      task.status = status;
+      task.tags = tags;
 
-      const errors = await validate(updatedTask);
+      const errors = await validate(task);
       if (!_.isEmpty(errors)) {
         const statuses = await TaskStatus.find();
         const users = await User.find();
 
         req.flash('error', i18next.t('flash.tasks.update.error'));
         reply.render('tasks/edit', {
-          updatedTask, statuses, users, errors,
+          task, statuses, users, errors,
         });
         return reply;
       }
 
-      await updatedTask.save();
+      await task.save();
       req.flash('info', i18next.t('flash.tasks.update.success'));
       return reply.redirect(app.reverse('tasks'));
     })

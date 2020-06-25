@@ -10,7 +10,7 @@ block content
     .form-group
       label= t('views.tasks.new.status')
       select.form-control(name='task[statusId]')
-        option(value='')= t('views.tasks.new.statusPlaceholder')
+        option= t('views.tasks.new.statusPlaceholder')
         each status in statuses
           option(value=status.id)= status.name
     .form-group

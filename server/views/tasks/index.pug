@@ -64,18 +64,21 @@ block content
                 small.text-muted= `${task.assignedTo ?  getFullName(task.assignedTo) : '-'}`
               p.card-text= `${t('views.tasks.list.status')}: `
                 span(class=`badge ${task.status ? 'badge-info' : ''}`)= _.get(task, 'status.name', '-')
-              a.btn.btn-link.btn-sm(href=`/tasks/${task.id}/edit`)= t('views.tasks.list.edit')
-              button.btn.bnt-link.btn-sm(
-                type='button'
-                style='color: red;'
-                data-toggle='modal'
-                data-target='#confirm'
-                data-method='delete'
-                data-action=`/tasks/${task.id}`
-              )= t('views.tasks.list.delete')
               .row
                 each tag in task.tags
                   .col-2.mb-2
                     span.badge.badge-pill.badge-primary= tag.name
+              hr
+              .row
+                .col
+                  a.btn.btn-link.btn-sm(href=`/tasks/${task.id}/edit`)= t('views.tasks.list.edit')
+                  button.btn.bnt-link.btn-sm(
+                    type='button'
+                    style='color: red;'
+                    data-toggle='modal'
+                    data-target='#confirm'
+                    data-method='delete'
+                    data-action=`/tasks/${task.id}`
+                  )= t('views.tasks.list.delete')
             .card-footer
               small.text-muted= `${t('views.tasks.list.lastUpdate')}: ${new Date(task.updatedAt).toDateString()}`
