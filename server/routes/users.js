@@ -46,7 +46,7 @@ export default (app) => {
       return reply;
     })
     .patch('/account/settings', { name: 'updateUser', preHandler: requiredAuth(app) }, async (req, reply) => {
-      const id = req.session.get('userId');
+      const { id } = req.currentUser;
       const user = await User.findOne(id);
       const updatedUser = User.merge(user, req.body.user);
 
@@ -63,7 +63,7 @@ export default (app) => {
       return reply;
     })
     .patch('/account/security', { name: 'updatePassword', preHandler: requiredAuth(app) }, async (req, reply) => {
-      const id = req.session.get('userId');
+      const { id } = req.currentUser;
       const user = await User.findOne(id);
 
       user.oldPassword = encrypt(req.body.user.oldPassword);

@@ -110,7 +110,10 @@ const registerPlugins = (app) => {
     .after((err) => {
       if (err) throw err;
     });
-  app.register(fastifyErrorPage);
+
+  if (!isTesting) {
+    app.register(fastifyErrorPage);
+  }
 };
 
 const setupErrorHandler = (app) => {

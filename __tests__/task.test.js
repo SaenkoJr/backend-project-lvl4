@@ -105,7 +105,6 @@ describe('Tasks', () => {
     });
 
     const tasksCount = await Task.count();
-
     expect(res.statusCode).toBe(302);
     expect(tasksCount).toBe(1);
   });

@@ -17,9 +17,17 @@ const parseTagsStr = (str = '') => str
 const createTags = async (str) => {
   const tags = parseTagsStr(str);
 
-  const promises = tags.map(async (tagName) => {
-    const tag = await Tag.findOne({ name: tagName });
-    return tag || Tag.create({ name: tagName });
+  const promises = _.uniq(tags).map(async (tagName) => {
+    const tagFromDb = await Tag.findOne({ name: tagName });
+
+    if (tagFromDb) {
+      return tagFromDb;
+    }
+
+    const tag = Tag.create({ name: tagName });
+    await tag.save();
+
+    return tag;
   });
 
   return Promise.all(promises);
@@ -50,7 +58,7 @@ const buildFilterQuery = (query) => {
 export default (app) => {
   app
     .get('/tasks', { name: 'tasks', preHandler: requiredAuth(app) }, async (req, reply) => {
-      const userId = req.session.get('userId');
+      const { id: userId } = req.currentUser;
 
       const { query } = req;
       const clauseStr = buildFilterQuery(query);
@@ -73,6 +81,7 @@ export default (app) => {
         statuses,
         users,
       });
+
       return reply;
     })
     .get('/tasks/new', { name: 'newTask', preHandler: requiredAuth(app) }, async (_req, reply) => {
@@ -93,7 +102,7 @@ export default (app) => {
       return reply;
     })
     .post('/tasks', { prehandler: requiredAuth(app) }, async (req, reply) => {
-      const userId = req.session.get('userId');
+      const { id: userId } = req.currentUser;
 
       const {
         name,
