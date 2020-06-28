@@ -4,4 +4,26 @@
 
 # Task Manager
 
-https://task-manager-saenkomm.herokuapp.com/
+Simple task manager
+
+[Demo](https://task-manager-saenkomm.herokuapp.com)
+
+# Setup
+
+```
+make setup
+```
+
+or
+
+```
+yarn install
+```
+
+# Start local server
+
+```
+make start
+```
+
+and open [localserver:5000]
