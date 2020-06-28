@@ -45,6 +45,7 @@
     "fastify-flash": "^1.0.6",
     "fastify-formbody": "^3.2.0",
     "fastify-method-override": "^1.1.2",
+    "fastify-no-icon": "^3.0.0",
     "fastify-plugin": "^1.6.1",
     "fastify-reverse-routes": "^1.1.0",
     "fastify-secure-session": "^1.2.0",

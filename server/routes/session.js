@@ -1,6 +1,9 @@
+import _ from 'lodash';
 import i18next from 'i18next';
-import User from '../entity/User';
+import { validate } from 'class-validator';
+
 import encrypt from '../lib/secure';
+import User from '../entity/User';
 
 export default (app) => {
   app
@@ -11,13 +14,21 @@ export default (app) => {
     })
     .post('/session', { name: 'session' }, async (req, reply) => {
       const signInForm = req.body.object;
-      const user = await User.findOne({ where: { email: signInForm.email } });
-      if (!user || (user.passwordDigest !== encrypt(signInForm.password))) {
+
+      const user = User.create(signInForm);
+      user.password = signInForm.password;
+      user.passwordDigest = encrypt(signInForm.password);
+
+      const errors = await validate(user, { groups: ['signIn'] });
+
+      if (!_.isEmpty(errors)) {
         req.flash('error', i18next.t('flash.session.create.error'));
-        return reply.render('session/new', { signInForm });
+        reply.render('session/new', { signInForm, errors });
+        return reply;
       }
 
-      req.session.set('userId', user.id);
+      const userFromDb = await User.findOne({ email: signInForm.email });
+      req.session.set('userId', userFromDb.id);
       req.flash('info', i18next.t('flash.session.create.success'));
       return reply.redirect(app.reverse('root'));
     })

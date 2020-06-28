@@ -11,7 +11,7 @@ block content
         a.nav-link.list-group-item.list-group-item-action.active(href=route('security'))= t('views.users.settings.security')
 
     .col-9
-      +formFor(user)(action=route('security') method='post')
+      +formFor(user)(id='submitForm' action=route('security') method='post')
         +input(user, 'oldPassword', t('views.users.settings.oldPassword'), errors)(type='password')
         +input(user, 'password', t('views.users.settings.newPassword'), errors)(type='password')
         +input(user, 'repeatedPassword', t('views.users.settings.repeatedPassword'), errors)(type='password')

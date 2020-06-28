@@ -1,55 +1,30 @@
 import i18next from 'i18next';
 import { validate } from 'class-validator';
 import _ from 'lodash';
+
+import requiredAuth from '../middlewares/requiredAuth';
 import TaskStatus from '../entity/TaskStatus';
 
 export default (app) => {
   app
-    .get('/statuses', { name: 'statuses' }, async (req, reply) => {
-      const userId = req.session.get('userId');
-
-      if (!userId) {
-        req.flash('error', i18next.t('flash.statuses.access.denied'));
-        return reply.redirect(app.reverse('root'));
-      }
-
+    .get('/statuses', { name: 'statuses', preHandler: requiredAuth(app) }, async (_req, reply) => {
       const statuses = await TaskStatus.find();
       reply.render('taskStatuses/index', { statuses });
       return reply;
     })
-    .get('/statuses/new', { name: 'newStatus' }, async (req, reply) => {
-      const userId = req.session.get('userId');
-
-      if (!userId) {
-        req.flash('error', i18next.t('flash.statuses.access.denied'));
-        return reply.redirect(app.reverse('root'));
-      }
-
+    .get('/statuses/new', { name: 'newStatus', preHandler: requiredAuth(app) }, async (_req, reply) => {
       const status = TaskStatus.create();
       reply.render('taskStatuses/new', { status });
       return reply;
     })
-    .get('/statuses/:id/edit', async (req, reply) => {
-      const userId = req.session.get('userId');
-
-      if (!userId) {
-        req.flash('error', i18next.t('flash.statuses.access.denied'));
-        return reply.redirect(app.reverse('root'));
-      }
-
+    .get('/statuses/:id/edit', { preHandler: requiredAuth(app) }, async (req, reply) => {
       const { id } = req.params;
       const status = await TaskStatus.findOne(id);
 
       reply.render('taskStatuses/edit', { status });
       return reply;
     })
-    .post('/statuses', async (req, reply) => {
-      const userId = req.session.get('userId');
-
-      if (!userId) {
-        return reply.code(403).send();
-      }
-
+    .post('/statuses', { preHandler: requiredAuth(app) }, async (req, reply) => {
       const status = TaskStatus.create(req.body.taskstatus);
 
       const errors = await validate(status);
@@ -63,13 +38,7 @@ export default (app) => {
       req.flash('info', i18next.t('flash.statuses.create.success'));
       return reply.redirect(app.reverse('statuses'));
     })
-    .patch('/statuses/:id', async (req, reply) => {
-      const userId = req.session.get('userId');
-
-      if (!userId) {
-        return reply.code(403).send();
-      }
-
+    .patch('/statuses/:id', { preHandler: requiredAuth(app) }, async (req, reply) => {
       const { id } = req.params;
 
       const status = await TaskStatus.findOne(id);
@@ -86,13 +55,7 @@ export default (app) => {
       req.flash('info', i18next.t('flash.statuses.update.success'));
       return reply.redirect(app.reverse('statuses'));
     })
-    .delete('/statuses/:id', async (req, reply) => {
-      const userId = req.session.get('userId');
-
-      if (!userId) {
-        return reply.code(403).send();
-      }
-
+    .delete('/statuses/:id', { preHandler: requiredAuth(app) }, async (req, reply) => {
       const { id } = req.params;
       const status = await TaskStatus.findOne(id, { relations: ['tasks'] });
 

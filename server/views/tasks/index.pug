@@ -2,45 +2,14 @@ extends ../layouts/application.pug
 
 block content
   - const currentUser = reply.request.currentUser;
-  - const getFullName = (user) => `${user.lastName} ${user.firstName}`;
   - const { assignedToId, statusId, tagsIds = [] } = reply.request.query;
 
   +confirmModal
 
   form#filters.border.rounded.p-3(action=route('tasks') method='get')
-    .form-row
-      .col-3.form-group
-        label(for='assignedTo')= t('views.tasks.list.assignedTo')
-        select#assignedTo.form-control(name='assignedToId')
-          option(selected value='all')= t('views.tasks.list.all')
-          option(value=currentUser.id selected=currentUser.id === Number(assignedToId))= t('views.tasks.list.my')
-          each user in users
-            option(value=user.id selected=user.id === Number(assignedToId))= `${user.firstName} ${user.lastName}`
-      .col-3.form-group
-        label(for='status')= t('views.tasks.list.status')
-        select#status.form-control(name='statusId')
-          option(selected value='all')= t('views.tasks.list.all')
-          each status in statuses
-            option(value=status.id selected=status.id === Number(statusId))= status.name
-      .col.form-group.align-self-end
-        button.btn.btn-info(form='filters' type='submit')= t('views.tasks.list.filter')
-    .form-row
-      if tags.length > 0
-        .col-12.mb-2= t('views.tasks.list.tags')
-        each tag in tags
-          .col-1.mb-3.form-group
-            .form-check
-              input.form-check-input(
-                id=`tag[${tag.id}]`
-                type='checkbox'
-                name='tagsIds[]'
-                value=tag.id
-                checked=tagsIds.includes(tag.id.toString())
-              )
-              label.form-check-label(for=`tag[${tag.id}]`)= tag.name
-    .form-row
+    +filters(users, statuses, tags)
   hr
-  if tasks.length === 0
+  if _.isEmpty(tasks)
     .row.justify-content-center
       .col-auto.mb-4
         span= t('views.tasks.list.empty')
@@ -53,32 +22,4 @@ block content
         a.btn.btn-primary(href=route('newTask'))= t('views.tasks.list.new')
     .row.row-cols-1.row-cols-md-3
       each task in tasks
-        .col.mb-4
-          .card
-            .card-body
-              h5.card-title= task.name
-              p.card-text= _.get(task, 'description', '-')
-              p.card-text= `${t('views.tasks.list.creator')}: `
-                small.text-muted= `${getFullName(task.creator)}`
-              p.card-text= `${t('views.tasks.list.assignedTo')}: `
-                small.text-muted= `${task.assignedTo ?  getFullName(task.assignedTo) : '-'}`
-              p.card-text= `${t('views.tasks.list.status')}: `
-                span(class=`badge ${task.status ? 'badge-info' : ''}`)= _.get(task, 'status.name', '-')
-              .row
-                each tag in task.tags
-                  .col-2.mb-2
-                    span.badge.badge-pill.badge-primary= tag.name
-              hr
-              .row
-                .col
-                  a.btn.btn-link.btn-sm(href=`/tasks/${task.id}/edit`)= t('views.tasks.list.edit')
-                  button.btn.bnt-link.btn-sm(
-                    type='button'
-                    style='color: red;'
-                    data-toggle='modal'
-                    data-target='#confirm'
-                    data-method='delete'
-                    data-action=`/tasks/${task.id}`
-                  )= t('views.tasks.list.delete')
-            .card-footer
-              small.text-muted= `${t('views.tasks.list.lastUpdate')}: ${new Date(task.updatedAt).toDateString()}`
+        +taskCard(task)

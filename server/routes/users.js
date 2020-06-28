@@ -1,19 +1,14 @@
 import i18next from 'i18next';
 import { validate } from 'class-validator';
 import _ from 'lodash';
+
 import encrypt from '../lib/secure';
+import requiredAuth from '../middlewares/requiredAuth';
 import User from '../entity/User';
 
 export default (app) => {
   app
-    .get('/users', { name: 'users' }, async (req, reply) => {
-      const userId = req.session.get('userId');
-
-      if (!userId) {
-        req.flash('error', i18next.t('flash.statuses.access.denied'));
-        return reply.redirect(app.reverse('root'));
-      }
-
+    .get('/users', { name: 'users', preHandler: requiredAuth(app) }, async (_req, reply) => {
       const users = await User.find();
       reply.render('users/index', { users });
       return reply;
@@ -40,34 +35,18 @@ export default (app) => {
       req.flash('info', i18next.t('flash.users.create.success'));
       return reply.redirect(app.reverse('root'));
     })
-    .get('/account/settings', { name: 'settings' }, async (req, reply) => {
-      if (req.currentUser.isGuest) {
-        req.flash('error', i18next.t('flash.users.access.denied'));
-        return reply.redirect(app.reverse('root'));
-      }
-
+    .get('/account/settings', { name: 'settings', preHandler: requiredAuth(app) }, async (req, reply) => {
       const user = await User.findOne(req.currentUser.id);
       reply.render('users/settings', { user });
       return reply;
     })
-    .get('/account/security', { name: 'security' }, async (req, reply) => {
-      if (req.currentUser.isGuest) {
-        req.flash('error', i18next.t('flash.users.access.denied'));
-        return reply.redirect(app.reverse('root'));
-      }
-
+    .get('/account/security', { name: 'security', preHandler: requiredAuth(app) }, async (req, reply) => {
       const user = await User.findOne(req.currentUser.id);
       reply.render('users/security', { user });
       return reply;
     })
-    .patch('/account/settings', { name: 'updateUser' }, async (req, reply) => {
+    .patch('/account/settings', { name: 'updateUser', preHandler: requiredAuth(app) }, async (req, reply) => {
       const id = req.session.get('userId');
-
-      if (!id) {
-        req.flash('error', i18next.t('flash.users.access.denied'));
-        return reply.redirect(app.reverse('root'));
-      }
-
       const user = await User.findOne(id);
       const updatedUser = User.merge(user, req.body.user);
 
@@ -83,14 +62,8 @@ export default (app) => {
       reply.redirect(app.reverse('settings'));
       return reply;
     })
-    .patch('/account/security', { name: 'updatePassword' }, async (req, reply) => {
+    .patch('/account/security', { name: 'updatePassword', preHandler: requiredAuth(app) }, async (req, reply) => {
       const id = req.session.get('userId');
-
-      if (!id) {
-        req.flash('error', i18next.t('flash.users.access.denied'));
-        return reply.redirect(app.reverse('root'));
-      }
-
       const user = await User.findOne(id);
 
       user.oldPassword = encrypt(req.body.user.oldPassword);
@@ -113,14 +86,9 @@ export default (app) => {
       reply.redirect(app.reverse('security'));
       return reply;
     })
-    .delete('/users/:id', async (req, reply) => {
+    .delete('/users/:id', { preHandler: requiredAuth(app) }, async (req, reply) => {
       const { id } = req.params;
       const user = await User.findOne(id, { relations: ['createdTasks', 'assignedTasks'] });
-
-      if (req.session.get('userId') !== Number(id)) {
-        req.flash('error', i18next.t('flash.users.access.denied'));
-        return reply.redirect(302, app.reverse('root'));
-      }
 
       if (!_.isEmpty(user.assignedTasks)) {
         req.flash('error', i18next.t('flash.users.delete.hasAssignedTasks'));

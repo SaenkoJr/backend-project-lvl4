@@ -13,7 +13,7 @@ block content
         a.nav-link.list-group-item.list-group-item-action(href=route('security'))= t('views.users.settings.security')
 
     .col-9
-      +formFor(user)(action=route('settings') method='post')
+      +formFor(user)(id='submitForm' action=route('settings') method='post')
         +input(user, 'firstName', t('views.users.new.firstName'), errors)(type='text')
         +input(user, 'lastName', t('views.users.new.lastName'), errors)(type='text')
         +input(user, 'email', t('views.users.new.email'), errors)(type='email')

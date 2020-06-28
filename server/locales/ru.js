@@ -5,7 +5,7 @@ module.exports = {
       session: {
         create: {
           success: 'Вы залогинены',
-          error: 'Неправильный емейл или пароль',
+          error: 'Неудалось войти',
         },
         delete: {
           success: 'Вы разлогинены',
@@ -16,8 +16,10 @@ module.exports = {
           isEmail: 'Некорректный адрес электронной почты',
           notEmpty: 'Необходимо заполнить поле',
           emailIsTaken: 'Такая почта уже используется',
+          emailIsNotFound: 'Почта не найдена',
           oldPasswordNotMatch: 'Неверный пароль',
           passwordNotMatch: 'Пароль не совпадает с новым',
+          wrongPassword: 'Неверный пароль',
         },
         create: {
           error: 'Не удалось зарегистрировать',

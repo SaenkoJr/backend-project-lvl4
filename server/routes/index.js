@@ -4,7 +4,7 @@ import session from './session';
 import taskStatuses from './statuses';
 import tasks from './tasks';
 
-const contollers = [
+const controllers = [
   welcome,
   users,
   taskStatuses,
@@ -12,4 +12,4 @@ const contollers = [
   tasks,
 ];
 
-export default (app) => contollers.forEach((f) => f(app));
+export default (app) => controllers.forEach((f) => f(app));

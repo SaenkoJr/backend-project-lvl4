@@ -19,12 +19,24 @@ const config = {
 
 switch (env) {
   case 'development':
-    config.type = 'sqlite';
-    config.database = `${__dirname}/database.sqlite`;
+    config.type = 'postgres';
+    config.url = process.env.DATABASE_URL || '';
+    config.database = process.env.DB_DATABASE;
+    config.host = process.env.DB_HOST;
+    config.port = process.env.DB_PORT;
+    config.username = process.env.DB_USER;
+    config.password = process.env.DB_PASSWORD;
     config.synchronize = true;
+    config.migrationsRun = false;
     config.logger = 'advanced-console';
     config.logging = ['query'];
     break;
+    // config.type = 'sqlite';
+    // config.database = `${__dirname}/database.sqlite`;
+    // config.synchronize = true;
+    // config.logger = 'advanced-console';
+    // config.logging = ['query'];
+    // break;
   case 'test':
     config.type = 'sqlite';
     config.database = ':memory:';

@@ -2,6 +2,8 @@ import i18next from 'i18next';
 import { validate } from 'class-validator';
 import _ from 'lodash';
 import { Not } from 'typeorm';
+
+import requiredAuth from '../middlewares/requiredAuth';
 import Task from '../entity/Task';
 import TaskStatus from '../entity/TaskStatus';
 import User from '../entity/User';
@@ -47,20 +49,15 @@ const buildFilterQuery = (query) => {
 
 export default (app) => {
   app
-    .get('/tasks', { name: 'tasks' }, async (req, reply) => {
-      const id = req.session.get('userId');
-
-      if (!id) {
-        req.flash('error', i18next.t('flash.tasks.access.denied'));
-        return reply.redirect(app.reverse('root'));
-      }
+    .get('/tasks', { name: 'tasks', preHandler: requiredAuth(app) }, async (req, reply) => {
+      const userId = req.session.get('userId');
 
       const { query } = req;
       const clauseStr = buildFilterQuery(query);
 
       const statuses = await TaskStatus.find();
       const tags = await Tag.find();
-      const users = await User.find({ id: Not(id) });
+      const users = await User.find({ id: Not(userId) });
       const tasks = await Task
         .createQueryBuilder('task')
         .leftJoinAndSelect('task.creator', 'creator')
@@ -78,14 +75,7 @@ export default (app) => {
       });
       return reply;
     })
-    .get('/tasks/new', { name: 'newTask' }, async (req, reply) => {
-      const userId = req.session.get('userId');
-
-      if (!userId) {
-        req.flash('error', i18next.t('flash.tasks.access.denied'));
-        return reply.redirect(app.reverse('root'));
-      }
-
+    .get('/tasks/new', { name: 'newTask', preHandler: requiredAuth(app) }, async (_req, reply) => {
       const task = Task.create();
       const statuses = await TaskStatus.find();
       const users = await User.find();
@@ -93,14 +83,7 @@ export default (app) => {
       reply.render('tasks/new', { task, statuses, users });
       return reply;
     })
-    .get('/tasks/:id/edit', async (req, reply) => {
-      const userId = req.session.get('userId');
-
-      if (!userId) {
-        req.flash('error', i18next.t('flash.tasks.access.denied'));
-        return reply.redirect(app.reverse('root'));
-      }
-
+    .get('/tasks/:id/edit', { preHandler: requiredAuth(app) }, async (req, reply) => {
       const { id } = req.params;
       const task = await Task.findOne(id);
       const statuses = await TaskStatus.find();
@@ -109,12 +92,8 @@ export default (app) => {
       reply.render('tasks/edit', { task, statuses, users });
       return reply;
     })
-    .post('/tasks', async (req, reply) => {
+    .post('/tasks', { prehandler: requiredAuth(app) }, async (req, reply) => {
       const userId = req.session.get('userId');
-
-      if (!userId) {
-        return reply.code(403);
-      }
 
       const {
         name,
@@ -152,21 +131,15 @@ export default (app) => {
       req.flash('info', i18next.t('flash.tasks.create.success'));
       return reply.redirect(app.reverse('tasks'));
     })
-    .patch('/tasks/:id', async (req, reply) => {
-      const userId = req.session.get('userId');
-
-      if (!userId) {
-        return reply.code(403);
-      }
-
+    .patch('/tasks/:id', { prehandler: requiredAuth(app) }, async (req, reply) => {
       const { id } = req.params;
       const {
         name, description, assignedToId, statusId, tags: tagsStr,
       } = req.body.task;
 
       const task = await Task.findOne(id);
-      const assignedTo = await User.findOne(assignedToId);
-      const status = await TaskStatus.findOne(statusId);
+      const assignedTo = assignedToId ? await User.findOne(assignedToId) : null;
+      const status = statusId ? await TaskStatus.findOne(statusId) : null;
       const tags = await createTags(tagsStr);
 
       task.name = name;
@@ -191,13 +164,7 @@ export default (app) => {
       req.flash('info', i18next.t('flash.tasks.update.success'));
       return reply.redirect(app.reverse('tasks'));
     })
-    .delete('/tasks/:id', async (req, reply) => {
-      const userId = req.session.get('userId');
-
-      if (!userId) {
-        return reply.code(403);
-      }
-
+    .delete('/tasks/:id', { prehandler: requiredAuth(app) }, async (req, reply) => {
       const { id } = req.params;
       const task = await Task.findOne(id);
 

@@ -11,6 +11,7 @@ import fastifyErrorPage from 'fastify-error-page';
 import fastifySecureSession from 'fastify-secure-session';
 import fastifyFormBody from 'fastify-formbody';
 import fastifyMethodOverride from 'fastify-method-override';
+import fastifyNoIcon from 'fastify-no-icon';
 import fastifyFlash from 'fastify-flash';
 import fastifyReverseRoutes from 'fastify-reverse-routes';
 import pointOfView from 'point-of-view';
@@ -87,15 +88,13 @@ const addHooks = (app) => {
     }
 
     if (req.body) {
-      req.log.info({ body: req.body }, 'parsed body');
+      req.log.info({ body: req.body }, 'Parsed body');
     }
-
-    /* eslint-disable-next-line */
-    return;
   });
 };
 
 const registerPlugins = (app) => {
+  app.register(fastifyNoIcon);
   app.register(fastifyReverseRoutes);
   app.register(fastifySecureSession, {
     secret: process.env.SESSION_SECRET,
@@ -115,14 +114,16 @@ const registerPlugins = (app) => {
 };
 
 const setupErrorHandler = (app) => {
-  const rollbar = new Rollbar({
-    accessToken: process.env.ROLLBAR_ACCESS_TOKEN,
-    captureUncaught: true,
-    captureUnhandledRejections: true,
-  });
-
   app.setErrorHandler(async (err, req, reply) => {
-    rollbar.error(err, req);
+    if (isProduction) {
+      const rollbar = new Rollbar({
+        accessToken: process.env.ROLLBAR_ACCESS_TOKEN,
+        captureUncaught: true,
+        captureUnhandledRejections: true,
+      });
+
+      rollbar.error(err, req);
+    }
 
     reply.send(err);
   });
@@ -138,12 +139,10 @@ export default () => {
       timestamp: !isDevelopment,
       base: null,
     },
-    querystringParser: (str) => qs.parse(str),
+    querystringParser: qs.parse,
   });
 
-  if (isProduction) {
-    setupErrorHandler(app);
-  }
+  setupErrorHandler(app);
 
   registerPlugins(app);
 
