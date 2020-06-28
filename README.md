@@ -8,7 +8,7 @@ Simple task manager
 
 [Demo](https://task-manager-saenkomm.herokuapp.com)
 
-# Setup
+### Setup
 
 ```
 make setup
@@ -20,10 +20,10 @@ or
 yarn install
 ```
 
-# Start local server
+### Start local server
 
 ```
 make start
 ```
 
-and open [localserver:5000]
+and open [127.0.0.1:5000]()
