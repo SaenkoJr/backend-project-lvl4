@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import i18next from 'i18next';
-import { validate } from 'class-validator';
 
 import encrypt from '../lib/secure';
 import User from '../entity/User';
@@ -13,22 +12,42 @@ export default (app) => {
       return reply;
     })
     .post('/session', { name: 'session' }, async (req, reply) => {
-      const signInForm = req.body.object;
+      const { email, password } = req.body.object;
 
-      const user = User.create(signInForm);
-      user.password = signInForm.password;
-      user.passwordDigest = encrypt(signInForm.password);
+      const errors = [];
+      const user = await User.findOne({ email });
+      const passwordDigest = _.get(user, 'passwordDigest', '');
 
-      const errors = await validate(user, { groups: ['signIn'] });
+      if (!user) {
+        const error = {
+          property: 'email',
+          constraints: {
+            isExist: i18next.t('flash.users.validate.emailNotFound'),
+          },
+        };
+
+        errors.push(error);
+      }
+
+      if (passwordDigest !== encrypt(password)) {
+        const error = {
+          property: 'password',
+          constraints: {
+            wrongPassword: i18next.t('flash.users.validate.wrongPassword'),
+          },
+        };
+
+        errors.push(error);
+      }
 
       if (!_.isEmpty(errors)) {
+        app.log.warn(errors);
         req.flash('error', i18next.t('flash.session.create.error'));
-        reply.render('session/new', { signInForm, errors });
+        reply.render('session/new', { signInForm: { email, password: '' }, errors });
         return reply;
       }
 
-      const userFromDb = await User.findOne({ email: signInForm.email });
-      req.session.set('userId', userFromDb.id);
+      req.session.set('userId', user.id);
       req.flash('info', i18next.t('flash.session.create.success'));
       return reply.redirect(app.reverse('root'));
     })

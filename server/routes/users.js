@@ -72,7 +72,9 @@ export default (app) => {
 
       const errors = await validate(user, { groups: ['security'] });
       if (!_.isEmpty(errors)) {
-        user.oldPassword = req.body.user.oldPassword;
+        user.oldPassword = '';
+        user.password = '';
+        user.repeatedPassword = '';
 
         req.flash('error', i18next.t('flash.users.update.error'));
         reply.code(422).render('users/security', { user, errors });
@@ -88,6 +90,12 @@ export default (app) => {
     })
     .delete('/users/:id', { preHandler: requiredAuth(app) }, async (req, reply) => {
       const { id } = req.params;
+
+      if (req.currentUser.id !== Number(id)) {
+        reply.code(403);
+        return 'Wrong user id';
+      }
+
       const user = await User.findOne(id, { relations: ['createdTasks', 'assignedTasks'] });
 
       if (!_.isEmpty(user.assignedTasks)) {

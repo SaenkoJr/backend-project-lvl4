@@ -10,7 +10,7 @@ mixin confirmModal()
         .modal-body
           p= t('mixins.modal.confirmMsg')
         .modal-footer
-          form#actionForm(action=action, method="post")
+          form#confirmForm(action=action, method="post")
             input#method(name="_method" type="hidden" value=method)
             button.btn.btn-danger.mr-2(type='submit')= t('mixins.modal.confirm')
             button.btn.btn-primary(type='button' data-dismiss='modal')= t('mixins.modal.close')

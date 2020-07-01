@@ -12,8 +12,6 @@ import i18next from 'i18next';
 
 import IsUnique from '../lib/validators/IsUnique';
 import IsMatch from '../lib/validators/IsMatch';
-import IsExist from '../lib/validators/IsExist';
-import IsPasswordCorrect from '../lib/validators/IsPasswordCorrect';
 
 @Entity('users')
 class User extends BaseEntity {
@@ -38,20 +36,16 @@ class User extends BaseEntity {
 
   @Column({ type: 'varchar', unique: true })
   @IsEmail({
-    groups: ['registration', 'update', 'signIn'],
+    groups: ['registration', 'update'],
     message: () => i18next.t('flash.users.validate.isEmail'),
   })
   @IsNotEmpty({
-    groups: ['registration', 'update', 'signIn'],
+    groups: ['registration', 'update'],
     message: () => i18next.t('flash.users.validate.notEmpty'),
   })
   @IsUnique({
     groups: ['registration', 'update'],
     message: () => i18next.t('flash.users.validate.emailIsTaken'),
-  })
-  @IsExist({
-    groups: ['signIn'],
-    message: () => i18next.t('flash.users.validate.emailIsNotFound'),
   })
   email;
 
@@ -66,12 +60,8 @@ class User extends BaseEntity {
   oldPassword;
 
   @IsNotEmpty({
-    groups: ['registration', 'security', 'signIn'],
+    groups: ['registration', 'security'],
     message: () => i18next.t('flash.users.validate.notEmpty'),
-  })
-  @IsPasswordCorrect({
-    groups: ['signIn'],
-    message: () => i18next.t('flash.users.validate.wrongPassword'),
   })
   password;
 
@@ -87,7 +77,7 @@ class User extends BaseEntity {
 
   @Column({ type: 'varchar' })
   @IsNotEmpty({
-    groups: ['registration', 'security', 'signIn'],
+    groups: ['registration', 'security'],
     message: () => i18next.t('flash.users.validate.notEmpty'),
   })
   passwordDigest;

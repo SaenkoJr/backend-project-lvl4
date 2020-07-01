@@ -286,6 +286,33 @@ describe('User', () => {
     expect(users).toHaveLength(1);
   });
 
+  it('DELETE /users/:id 403. Remove user if current id is not equal to target id ', async () => {
+    const user2 = buildUser();
+
+    await server.inject({
+      method: 'POST',
+      url: '/users',
+      body: {
+        user: user2,
+      },
+    });
+
+    const { id } = await User.findOne({ email: user2.email });
+
+    const res = await server.inject({
+      method: 'DELETE',
+      url: `/users/${id}`,
+      cookies: {
+        session: sessisonCookie,
+      },
+    });
+
+    const users = await User.find();
+
+    expect(res.statusCode).toBe(403);
+    expect(users).toHaveLength(2);
+  });
+
   afterEach(async () => {
     await User.clear();
   });

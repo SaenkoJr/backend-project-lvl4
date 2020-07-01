@@ -101,7 +101,7 @@ export default (app) => {
       reply.render('tasks/edit', { task, statuses, users });
       return reply;
     })
-    .post('/tasks', { prehandler: requiredAuth(app) }, async (req, reply) => {
+    .post('/tasks', { preHandler: requiredAuth(app) }, async (req, reply) => {
       const { id: userId } = req.currentUser;
 
       const {
@@ -140,7 +140,7 @@ export default (app) => {
       req.flash('info', i18next.t('flash.tasks.create.success'));
       return reply.redirect(app.reverse('tasks'));
     })
-    .patch('/tasks/:id', { prehandler: requiredAuth(app) }, async (req, reply) => {
+    .patch('/tasks/:id', { preHandler: requiredAuth(app) }, async (req, reply) => {
       const { id } = req.params;
       const {
         name, description, assignedToId, statusId, tags: tagsStr,
@@ -173,7 +173,7 @@ export default (app) => {
       req.flash('info', i18next.t('flash.tasks.update.success'));
       return reply.redirect(app.reverse('tasks'));
     })
-    .delete('/tasks/:id', { prehandler: requiredAuth(app) }, async (req, reply) => {
+    .delete('/tasks/:id', { preHandler: requiredAuth(app) }, async (req, reply) => {
       const { id } = req.params;
       const task = await Task.findOne(id);
 

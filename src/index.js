@@ -9,11 +9,15 @@ $(() => {
     const action = button.data('action');
 
     const modal = $(this);
-    modal.find('#actionForm').attr('action', action);
+    modal.find('#confirmForm').attr('action', action);
     modal.find('#method').val(method);
   });
 
   $('#submitForm').submit(function handler() {
+    $(this).find('[type=submit]').prop('disabled', true);
+  });
+
+  $('#confirmForm').submit(function handler() {
     $(this).find('[type=submit]').prop('disabled', true);
   });
 });
