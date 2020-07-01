@@ -20,6 +20,7 @@ module.exports = {
           oldPasswordNotMatch: 'Неверный пароль',
           passwordNotMatch: 'Пароль не совпадает с новым',
           wrongPassword: 'Неверный пароль',
+          wrongUserId: 'Неверный id пользователя',
         },
         create: {
           error: 'Не удалось зарегистрировать',

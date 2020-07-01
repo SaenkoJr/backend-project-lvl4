@@ -93,7 +93,7 @@ export default (app) => {
 
       if (req.currentUser.id !== Number(id)) {
         reply.code(403);
-        return 'Wrong user id';
+        return i18next.t('flash.users.validate.wrongUserId');
       }
 
       const user = await User.findOne(id, { relations: ['createdTasks', 'assignedTasks'] });
