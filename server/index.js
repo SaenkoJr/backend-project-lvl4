@@ -1,7 +1,7 @@
 import 'reflect-metadata';
+import 'dotenv/config';
 import path from 'path';
 import qs from 'qs';
-import dotenv from 'dotenv';
 import crypto from 'crypto';
 import Rollbar from 'rollbar';
 import fastify from 'fastify';
@@ -133,8 +133,6 @@ const setupErrorHandler = (app) => {
 };
 
 export default () => {
-  dotenv.config();
-
   const app = fastify({
     logger: {
       level: isTesting ? 'warn' : 'info',
