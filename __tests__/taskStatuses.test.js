@@ -4,32 +4,28 @@ import app from '../server';
 
 import TaskStatus from '../server/entity/TaskStatus';
 import User from '../server/entity/User';
+import secure from '../server/lib/secure';
 
 describe('Statuses', () => {
   let server;
   let sessisonCookie;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     server = app();
+    await server.ready();
   });
 
   beforeEach(async () => {
     const authEmail = faker.internet.email();
     const authPass = faker.internet.password();
+    const passwordDigest = secure(authPass);
 
-    await server.inject({
-      method: 'POST',
-      url: '/users',
-      body: {
-        user: {
-          firstName: faker.name.firstName(),
-          lastName: faker.name.lastName(),
-          email: authEmail,
-          password: authPass,
-          repeatedPassword: authPass,
-        },
-      },
-    });
+    await User.create({
+      firstName: faker.name.firstName(),
+      lastName: faker.name.lastName(),
+      email: authEmail,
+      passwordDigest,
+    }).save();
 
     const { cookies } = await server.inject({
       method: 'POST',
@@ -70,53 +66,8 @@ describe('Statuses', () => {
   });
 
   it('POST /statuses 302', async () => {
-    const res = await server.inject({
-      method: 'POST',
-      url: '/statuses',
-      cookies: {
-        session: sessisonCookie,
-      },
-      body: {
-        taskstatus: {
-          name: faker.name.title(),
-        },
-      },
-    });
-
-    expect(res.statusCode).toBe(302);
-  });
-
-  it('POST /statuses 422', async () => {
-    const res = await server.inject({
-      method: 'POST',
-      url: '/statuses',
-      cookies: {
-        session: sessisonCookie,
-      },
-      body: {
-        taskstatus: {
-          name: '',
-        },
-      },
-    });
-
-    expect(res.statusCode).toBe(422);
-  });
-
-  it('POST /statuses 422. Create status with existing name', async () => {
     const name = faker.name.title();
 
-    await server.inject({
-      method: 'POST',
-      url: '/statuses',
-      cookies: {
-        session: sessisonCookie,
-      },
-      body: {
-        taskstatus: { name },
-      },
-    });
-
     const res = await server.inject({
       method: 'POST',
       url: '/statuses',
@@ -124,160 +75,64 @@ describe('Statuses', () => {
         session: sessisonCookie,
       },
       body: {
-        taskstatus: { name },
+        taskstatus: {
+          name,
+        },
       },
     });
 
-    expect(res.statusCode).toBe(422);
+    const status = await TaskStatus.findOne({ name });
+
+    expect(res.statusCode).toBe(302);
+    expect(status).toHaveProperty('name', name);
   });
 
   it('PATCH /statuses/:id', async () => {
-    const name = faker.name.title();
+    const status = await TaskStatus.create({
+      name: faker.name.title(),
+    }).save();
+    const updatedName = faker.name.title();
 
-    await server.inject({
-      method: 'POST',
-      url: '/statuses',
-      cookies: {
-        session: sessisonCookie,
-      },
-      body: {
-        taskstatus: { name },
-      },
-    });
-
-    const { id } = await TaskStatus.findOne({ name });
     const res = await server.inject({
       method: 'PATCH',
-      url: `/statuses/${id}`,
+      url: `/statuses/${status.id}`,
       cookies: {
         session: sessisonCookie,
       },
       body: {
         taskstatus: {
-          name: faker.name.title(),
+          name: updatedName,
         },
       },
     });
 
-    const updatedStatus = await TaskStatus.findOne({ id });
+    const updatedStatus = await TaskStatus.findOne({ id: status.id });
 
     expect(res.statusCode).toBe(302);
-    expect(updatedStatus.name).not.toBe(name);
-  });
-
-  it('PATCH /statuses/:id 422', async () => {
-    const name = faker.name.title();
-
-    await server.inject({
-      method: 'POST',
-      url: '/statuses',
-      cookies: {
-        session: sessisonCookie,
-      },
-      body: {
-        taskstatus: { name },
-      },
-    });
-
-    const { id } = await TaskStatus.findOne({ name });
-    const res = await server.inject({
-      method: 'PATCH',
-      url: `/statuses/${id}`,
-      cookies: {
-        session: sessisonCookie,
-      },
-      body: {
-        taskstatus: {
-          name: '',
-        },
-      },
-    });
-
-    expect(res.statusCode).toBe(422);
-  });
-
-  it('PATCH /statuses/:id 422. Update status with existing name', async () => {
-    const name1 = faker.name.title();
-    const name2 = faker.name.title();
-
-    await server.inject({
-      method: 'POST',
-      url: '/statuses',
-      cookies: {
-        session: sessisonCookie,
-      },
-      body: {
-        taskstatus: { name: name1 },
-      },
-    });
-
-    await server.inject({
-      method: 'POST',
-      url: '/statuses',
-      cookies: {
-        session: sessisonCookie,
-      },
-      body: {
-        taskstatus: { name: name2 },
-      },
-    });
-
-    const { id } = await TaskStatus.findOne({ name: name2 });
-    const res = await server.inject({
-      method: 'PATCH',
-      url: `/statuses/${id}`,
-      cookies: {
-        session: sessisonCookie,
-      },
-      body: {
-        taskstatus: {
-          name: name1,
-        },
-      },
-    });
-
-    expect(res.statusCode).toBe(422);
+    expect(updatedStatus).toHaveProperty('name', updatedName);
   });
 
   it('DELETE /statuses/:id', async () => {
     const name1 = faker.name.title();
     const name2 = faker.name.title();
 
-    await server.inject({
-      method: 'POST',
-      url: '/statuses',
-      cookies: {
-        session: sessisonCookie,
-      },
-      body: {
-        taskstatus: { name: name1 },
-      },
-    });
-    await server.inject({
-      method: 'POST',
-      url: '/statuses',
-      cookies: {
-        session: sessisonCookie,
-      },
-      body: {
-        taskstatus: { name: name2 },
-      },
-    });
-
-    const { id } = await TaskStatus.findOne({ name: name1 });
+    const status1 = await TaskStatus.create({ name: name1 }).save();
+    const status2 = await TaskStatus.create({ name: name2 }).save();
 
     const res = await server.inject({
       method: 'DELETE',
       cookies: {
         session: sessisonCookie,
       },
-      url: `/statuses/${id}`,
+      url: `/statuses/${status1.id}`,
     });
 
     const statuses = await TaskStatus.find();
 
     expect(res.statusCode).toBe(302);
     expect(statuses).toHaveLength(1);
+    expect(statuses).not.toContainEqual(status1);
+    expect(statuses).toContainEqual(status2);
   });
 
   afterEach(async () => {

@@ -10,6 +10,7 @@ describe('User', () => {
 
   const buildUser = () => {
     const password = faker.internet.password(8);
+    const passwordDigest = secure(password);
 
     return {
       firstName: faker.name.firstName(),
@@ -17,21 +18,19 @@ describe('User', () => {
       email: faker.internet.email(),
       password,
       repeatedPassword: password,
+      passwordDigest,
     };
   };
 
   const mainUser = buildUser();
 
-  beforeAll(() => {
+  beforeAll(async () => {
     server = app();
+    await server.ready();
   });
 
   beforeEach(async () => {
-    await server.inject({
-      method: 'POST',
-      url: '/users',
-      body: { user: mainUser },
-    });
+    await User.create(mainUser).save();
 
     const { cookies } = await server.inject({
       method: 'POST',
@@ -60,48 +59,25 @@ describe('User', () => {
   });
 
   it('POST /users 302', async () => {
-    const res = await server.inject({
-      method: 'POST',
-      url: '/users',
-      body: {
-        user: buildUser(),
-      },
-    });
-
-    const users = await User.find();
-
-    expect(res.statusCode).toBe(302);
-    expect(users).toHaveLength(2);
-  });
-
-  it('POST /users 422. Create user with existing email', async () => {
     const user = buildUser();
 
-    await server.inject({
-      method: 'POST',
-      url: '/users',
-      body: {
-        user,
-      },
-    });
-
     const res = await server.inject({
       method: 'POST',
       url: '/users',
-      body: {
-        user,
-      },
+      body: { user },
     });
 
-    const users = await User.find();
+    const createdUser = await User.findOne({ email: user.email });
 
-    expect(res.statusCode).toBe(422);
-    expect(users).toHaveLength(2);
+    expect(res.statusCode).toBe(302);
+    expect(createdUser.firstName).toBe(user.firstName);
+    expect(createdUser.lastName).toBe(user.lastName);
   });
 
   it('PATCH /account/settings', async () => {
-    const { email } = mainUser;
-    const { id } = await User.findOne({ email });
+    const updatedFirstName = faker.name.firstName();
+    const updatedLastName = faker.name.lastName();
+    const updatedEmail = faker.internet.email();
 
     const res = await server.inject({
       method: 'PATCH',
@@ -111,170 +87,54 @@ describe('User', () => {
       },
       body: {
         user: {
-          firstName: faker.name.firstName(),
+          firstName: updatedFirstName,
+          lastName: updatedLastName,
+          email: updatedEmail,
         },
       },
     });
 
-    const updatedUser = await User.findOne({ id });
+    const updatedUser = await User.findOne({ email: updatedEmail });
 
     expect(res.statusCode).toBe(302);
-    expect(updatedUser.firstName).not.toBe(mainUser.firstName);
+    expect(updatedUser.firstName).toBe(updatedFirstName);
+    expect(updatedUser.lastName).toBe(updatedLastName);
   });
 
   it('PATCH /account/security 302', async () => {
-    const user = buildUser();
-
-    await server.inject({
-      method: 'DELETE',
-      url: '/session',
-    });
-
-    await server.inject({
-      method: 'POST',
-      url: '/users',
-      body: { user },
-    });
-
-    const { cookies } = await server.inject({
-      method: 'POST',
-      url: '/session',
-      body: {
-        object: {
-          email: user.email,
-          password: user.password,
-        },
-      },
-    });
-
+    const { email, password } = mainUser;
     const newPassword = faker.internet.password();
-    const passwordDigest = secure(newPassword);
-
-    const { id } = await User.findOne({ email: user.email });
+    const newPasswordDigest = secure(newPassword);
 
     const res = await server.inject({
       method: 'PATCH',
       url: '/account/security',
       cookies: {
-        session: cookies[0].value,
+        session: sessisonCookie,
       },
       body: {
         user: {
-          oldPassword: user.password,
+          oldPassword: password,
           password: newPassword,
           repeatedPassword: newPassword,
         },
       },
     });
 
-    const updatedUser = await User.findOne({ id });
+    const updatedUser = await User.findOne({ email });
 
     expect(res.statusCode).toBe(302);
-    expect(updatedUser.passwordDigest).toBe(passwordDigest);
-  });
-
-  it('PATCH /account/security 422. Wrong old password', async () => {
-    const user = buildUser();
-
-    await server.inject({
-      method: 'DELETE',
-      url: '/session',
-    });
-
-    await server.inject({
-      method: 'POST',
-      url: '/users',
-      body: { user },
-    });
-
-    const { cookies } = await server.inject({
-      method: 'POST',
-      url: '/session',
-      body: {
-        object: {
-          email: user.email,
-          password: user.password,
-        },
-      },
-    });
-
-    const newPassword = faker.internet.password();
-
-    const res = await server.inject({
-      method: 'PATCH',
-      url: '/account/security',
-      cookies: {
-        session: cookies[0].value,
-      },
-      body: {
-        user: {
-          oldPassword: 'wrong old pasword',
-          password: newPassword,
-          repeatedPassword: newPassword,
-        },
-      },
-    });
-
-    expect(res.statusCode).toBe(422);
-  });
-
-  it('PATCH /account/settings 422', async () => {
-    const res = await server.inject({
-      method: 'PATCH',
-      url: '/account/settings',
-      cookies: {
-        session: sessisonCookie,
-      },
-      body: {
-        user: {
-          firstName: '',
-        },
-      },
-    });
-
-    expect(res.statusCode).toBe(422);
-  });
-
-  it('PATCH /account/settings 422. Update user with existing email. ', async () => {
-    const user = buildUser();
-
-    await server.inject({
-      method: 'POST',
-      url: '/users',
-      body: {
-        user,
-      },
-    });
-
-    const res = await server.inject({
-      method: 'PATCH',
-      url: '/account/settings',
-      cookies: {
-        session: sessisonCookie,
-      },
-      body: { user },
-    });
-
-    expect(res.statusCode).toBe(422);
+    expect(updatedUser.passwordDigest).toBe(newPasswordDigest);
   });
 
   it('DELETE /users/:id', async () => {
-    const user2 = buildUser();
+    await User.create(buildUser()).save();
 
-    await server.inject({
-      method: 'POST',
-      url: '/users',
-      body: {
-        user: user2,
-      },
-    });
-
-    const { email } = mainUser;
-    const { id } = await User.findOne({ email });
+    const user = await User.findOne({ email: mainUser.email });
 
     const res = await server.inject({
       method: 'DELETE',
-      url: `/users/${id}`,
+      url: `/users/${user.id}`,
       cookies: {
         session: sessisonCookie,
       },
@@ -284,24 +144,15 @@ describe('User', () => {
 
     expect(res.statusCode).toBe(302);
     expect(users).toHaveLength(1);
+    expect(users).not.toContainEqual(user);
   });
 
   it('DELETE /users/:id 403. Remove user if current id is not equal to target id ', async () => {
-    const user2 = buildUser();
-
-    await server.inject({
-      method: 'POST',
-      url: '/users',
-      body: {
-        user: user2,
-      },
-    });
-
-    const { id } = await User.findOne({ email: user2.email });
+    const user = await User.create(buildUser()).save();
 
     const res = await server.inject({
       method: 'DELETE',
-      url: `/users/${id}`,
+      url: `/users/${user.id}`,
       cookies: {
         session: sessisonCookie,
       },
@@ -311,6 +162,7 @@ describe('User', () => {
 
     expect(res.statusCode).toBe(403);
     expect(users).toHaveLength(2);
+    expect(users).toContainEqual(user);
   });
 
   afterEach(async () => {
