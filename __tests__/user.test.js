@@ -22,7 +22,7 @@ describe('User', () => {
     };
   };
 
-  const mainUser = buildUser();
+  const currentUser = buildUser();
 
   beforeAll(async () => {
     server = app();
@@ -30,15 +30,15 @@ describe('User', () => {
   });
 
   beforeEach(async () => {
-    await User.create(mainUser).save();
+    await User.create(currentUser).save();
 
     const { cookies } = await server.inject({
       method: 'POST',
       url: '/session',
       body: {
         object: {
-          email: mainUser.email,
-          password: mainUser.password,
+          email: currentUser.email,
+          password: currentUser.password,
         },
       },
     });
@@ -102,7 +102,7 @@ describe('User', () => {
   });
 
   it('PATCH /account/security 302', async () => {
-    const { email, password } = mainUser;
+    const { email, password } = currentUser;
     const newPassword = faker.internet.password();
     const newPasswordDigest = secure(newPassword);
 
@@ -130,7 +130,7 @@ describe('User', () => {
   it('DELETE /users/:id', async () => {
     await User.create(buildUser()).save();
 
-    const user = await User.findOne({ email: mainUser.email });
+    const user = await User.findOne({ email: currentUser.email });
 
     const res = await server.inject({
       method: 'DELETE',

@@ -31,7 +31,11 @@ mixin tagsInput(tags)
 
 mixin submit(form = null)
   .form-group
-    input(class='btn btn-primary' type='submit')&attributes(attributes)
+    input(
+      class='btn btn-primary'
+      data-disable-with=attributes.value
+      type='submit'
+    )&attributes(attributes)
 
 mixin buttonTo(action, method)
   form(action=action, method="post")
