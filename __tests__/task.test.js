@@ -95,11 +95,13 @@ describe('Tasks', () => {
     const task = await Task.findOne({ name });
 
     expect(res.statusCode).toBe(302);
-    expect(task).toHaveProperty('name', name);
-    expect(task).toHaveProperty('description', description);
-    expect(task).toHaveProperty('status.id', taskStatus1.id);
-    expect(task).toHaveProperty('creator.id', user.id);
-    expect(task).toHaveProperty('assignedTo.id', user.id);
+    expect(task).toMatchObject({
+      name,
+      description,
+      status: { id: taskStatus1.id },
+      creator: { id: user.id },
+      assignedTo: { id: user.id },
+    });
   });
 
   it('POST /tasks with tags 302', async () => {
@@ -126,11 +128,13 @@ describe('Tasks', () => {
     const tags = await Tag.find();
 
     expect(res.statusCode).toBe(302);
-    expect(task).toHaveProperty('name', name);
-    expect(task).toHaveProperty('status.id', taskStatus2.id);
     expect(task.tags).toHaveLength(2);
-    expect(task.tags).toEqual(tags);
-    expect(task).toHaveProperty('creator.id', user.id);
+    expect(task).toMatchObject({
+      name,
+      status: { id: taskStatus2.id },
+      creator: { id: user.id },
+      tags,
+    });
   });
 
   it('PATCH /tasks/:id 302', async () => {
@@ -168,10 +172,14 @@ describe('Tasks', () => {
     const updatedTask = await Task.findOne(task.id);
 
     expect(res.statusCode).toBe(302);
-    expect(updatedTask).toHaveProperty('name', updatedName);
-    expect(updatedTask).toHaveProperty('description', updatedDescription);
-    expect(updatedTask).toHaveProperty('status.id', taskStatus2.id);
-    expect(updatedTask).toHaveProperty('assignedTo', null);
+    expect(updatedTask).toMatchObject({
+      name: updatedName,
+      description: updatedDescription,
+      status: {
+        id: taskStatus2.id,
+      },
+      assignedTo: null,
+    });
   });
 
   it('PATCH /tasks/:id 302. Update tags', async () => {
@@ -209,10 +217,12 @@ describe('Tasks', () => {
     const tags = await Tag.find();
 
     expect(res.statusCode).toBe(302);
-    expect(updatedTask).toHaveProperty('name', name);
-    expect(updatedTask).toHaveProperty('status.id', taskStatus1.id);
     expect(updatedTask.tags).toHaveLength(3);
-    expect(updatedTask.tags).toEqual(tags);
+    expect(updatedTask).toMatchObject({
+      name,
+      status: { id: taskStatus1.id },
+      tags,
+    });
   });
 
   it('DELETE /tasks/:id 302', async () => {
